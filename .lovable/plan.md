@@ -1,40 +1,22 @@
-## Legislação Mapeada - Questões
 
-Plataforma completa de questões para concursos públicos, marca Caderno Mapeado.
 
-### Identidade Visual
+## Changes
 
-- Paleta verde (#3B6D11, #639922, #C0DD97, #EAF3DE) + laranja destaque (#EF9F27)
-- Tipografia: Nunito (títulos) + Nunito Sans (corpo)
-- Estilo clean, profissional, light mode
+### 1. Login with credential validation
+Add validation in `Login.tsx` to only allow `teste@teste.com` / `123456`. Show error message for invalid credentials.
 
-### Telas (6 páginas navegáveis)
+### 2. Replace green (#3B6D11) with teal (#01999c)
+`#01999c` in HSL ≈ `181 99% 30%`. Update all green-based CSS variables in `src/index.css`:
 
-1. **Login** — Logo CM Cursos, campos email/senha, botão verde, links criar conta/esqueci senha
-2. **Dashboard** — Saudação "Ana Lima", streak 3 dias, 45 XP, meta diária com gráfico circular, resumo (resolvidas/acertos/erros/favoritas), barra de aproveitamento, badges de conquistas
-3. **Configurar Prática** — Filtros por concurso (TJ SP, TJ SC, PGM Porto Alegre), matéria e lei com checkboxes expansíveis, toggles (favoritas/não resolvidas/caderno de erros), botão "Iniciar Prática (X questões)"
-4. **Tela da Questão** — Enunciado, 5 alternativas ou Certo/Errado, feedback visual ao clicar (verde/vermelho), comentário do professor com fundamentação legal, navegação Anterior/Próxima/Aleatória
-5. **Desempenho** — Tabs Visão Geral/Evolução/Análise, filtros período/dificuldade, gráfico de rosca, heatmap estilo GitHub, matérias que precisam reforço
-6. **Planos** — Cards FREE vs PREMIUM com comparativo, lista de benefícios, botão "Assinar Premium"
+- `--primary`: `181 99% 30%`
+- `--secondary`: `181 70% 40%`
+- `--muted`: `181 40% 90%`
+- `--accent`: `181 45% 85%`
+- `--accent-foreground`: `181 99% 30%`
+- `--success`: `181 99% 30%`
+- `--border`: `181 20% 85%`
+- `--input`: `181 20% 85%`
+- `--ring`: `181 99% 30%`
 
-### Navegação
+Files changed: `src/pages/Login.tsx`, `src/index.css`
 
-- Navbar superior: Início | Questões | Desempenho | Planos
-- Item ativo com destaque verde
-- Botão "Premium" laranja no canto direito
-- Avatar do usuário
-
-### Dados Mockados
-
-- Concursos: Polícia Federal, Guarda Municipal de Manaus
-- Matérias: Direito Penal, Constitucional, Processual Penal, Ambiental, Legislação Especial
-- Leis: CF-88, CP, CPP, Lei 9.605/98
-- Questão exemplo sobre Art. 1º da CF-88
-- Usuário: Ana Lima, plano FREE, 3 dias streak, 45 XP
-
-### Implementação
-
-- Componentes React com estado local para toda interatividade
-- Gráficos SVG customizados (rosca, circular, heatmap)
-- Responsivo desktop-first
-- Todas as cores via CSS variables no design system
