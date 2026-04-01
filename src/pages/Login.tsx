@@ -75,6 +75,10 @@ export default function Login() {
               </button>
             </div>
 
+            {error && (
+              <p className="text-sm font-medium text-destructive">{error}</p>
+            )}
+
             <button
               type="submit"
               className="flex w-full items-center justify-center gap-2 rounded-lg bg-primary py-3 font-heading text-sm font-bold text-primary-foreground transition-colors hover:bg-primary/90"
