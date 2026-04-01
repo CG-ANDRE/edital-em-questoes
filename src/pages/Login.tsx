@@ -7,10 +7,16 @@ export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  const [error, setError] = useState("");
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
-    navigate("/dashboard");
+    if (email === "teste@teste.com" && password === "123456") {
+      setError("");
+      navigate("/dashboard");
+    } else {
+      setError("E-mail ou senha inválidos.");
+    }
   };
 
   return (
