@@ -1,6 +1,12 @@
+import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import Layout from "@/components/Layout";
 import { user } from "@/data/mockData";
-import { Flame, Zap, Target, CheckCircle2, XCircle, Star, TrendingUp } from "lucide-react";
+import { editais, DayPlan, PlanningInput } from "@/data/planningData";
+import { Flame, Zap, Target, CheckCircle2, XCircle, Star, TrendingUp, CalendarDays, BookOpen, Clock, ArrowRight, GraduationCap } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Progress } from "@/components/ui/progress";
 
 function CircularProgress({ value, max, size = 120 }: { value: number; max: number; size?: number }) {
   const radius = (size - 12) / 2;
@@ -27,6 +33,28 @@ function CircularProgress({ value, max, size = 120 }: { value: number; max: numb
 }
 
 export default function Dashboard() {
+  const navigate = useNavigate();
+  const [savedPlan, setSavedPlan] = useState<{ plans: DayPlan[]; input: PlanningInput } | null>(null);
+
+  useEffect(() => {
+    try {
+      const plansRaw = localStorage.getItem("legisquest_study_plan");
+      const inputRaw = localStorage.getItem("legisquest_study_plan_input");
+      if (plansRaw && inputRaw) {
+        setSavedPlan({ plans: JSON.parse(plansRaw), input: JSON.parse(inputRaw) });
+      }
+    } catch { /* ignore */ }
+  }, []);
+
+  const edital = savedPlan ? editais[savedPlan.input.concursoId] : null;
+  const todayStr = new Date().toISOString().split("T")[0];
+  const todayPlan = savedPlan?.plans.find(p => p.date === todayStr);
+  const upcomingPlans = savedPlan?.plans.filter(p => p.date >= todayStr).slice(0, 5) || [];
+  const totalHours = savedPlan ? savedPlan.plans.reduce((s, p) => s + p.blocks.reduce((bs, b) => bs + b.duration, 0), 0) / 60 : 0;
+  const totalDays = savedPlan?.plans.length || 0;
+  const daysCompleted = savedPlan?.plans.filter(p => p.date < todayStr).length || 0;
+  const progressPercent = totalDays > 0 ? Math.round((daysCompleted / totalDays) * 100) : 0;
+
   return (
     <Layout>
       <div className="space-y-6">
@@ -134,6 +162,111 @@ export default function Dashboard() {
               </div>
             ))}
           </div>
+        </div>
+
+        {/* Planning Section */}
+        <div className="rounded-2xl border bg-card p-6 shadow-sm">
+          <div className="mb-4 flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <CalendarDays className="h-5 w-5 text-primary" />
+              <h2 className="font-heading text-lg font-bold text-foreground">📚 Planejamento de Estudos</h2>
+            </div>
+            <Button variant="outline" size="sm" className="gap-1.5" onClick={() => navigate("/planning")}>
+              {savedPlan ? "Ver Completo" : "Criar Plano"} <ArrowRight className="h-3.5 w-3.5" />
+            </Button>
+          </div>
+
+          {savedPlan && edital ? (
+            <div className="space-y-4">
+              {/* Plan overview */}
+              <div className="flex flex-wrap gap-2">
+                <Badge className="bg-primary/10 text-primary border-0">
+                  <GraduationCap className="mr-1 h-3 w-3" /> {edital.cargo}
+                </Badge>
+                <Badge className="bg-highlight/10 text-highlight border-0">
+                  <Clock className="mr-1 h-3 w-3" /> {totalHours.toFixed(0)}h total
+                </Badge>
+                <Badge className="bg-secondary/10 text-secondary border-0">
+                  <BookOpen className="mr-1 h-3 w-3" /> {edital.disciplinas.length} matérias
+                </Badge>
+              </div>
+
+              {/* Progress */}
+              <div>
+                <div className="mb-1.5 flex items-center justify-between text-sm">
+                  <span className="text-muted-foreground">Progresso do ciclo</span>
+                  <span className="font-bold text-primary">{progressPercent}%</span>
+                </div>
+                <Progress value={progressPercent} className="h-2.5" />
+                <p className="mt-1 text-xs text-muted-foreground">
+                  {daysCompleted} de {totalDays} dias concluídos
+                </p>
+              </div>
+
+              {/* Today's plan */}
+              {todayPlan ? (
+                <div>
+                  <h3 className="mb-2 text-sm font-semibold text-foreground">📅 Estudo de Hoje</h3>
+                  <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
+                    {todayPlan.blocks.map((block, i) => (
+                      <div key={i} className="flex items-center gap-3 rounded-lg border bg-muted/30 p-3">
+                        <div className={`h-2 w-2 rounded-full ${
+                          block.type === "revisao" ? "bg-highlight" : block.type === "questoes" ? "bg-secondary" : "bg-primary"
+                        }`} />
+                        <div className="min-w-0 flex-1">
+                          <p className="truncate text-sm font-medium text-foreground">{block.subject}</p>
+                          <p className="text-xs text-muted-foreground">
+                            {block.duration}min • {block.type === "estudo" ? "Estudo" : block.type === "revisao" ? "Revisão" : "Questões"}
+                          </p>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              ) : (
+                <div className="rounded-lg border border-dashed bg-muted/20 p-4 text-center">
+                  <p className="text-sm text-muted-foreground">Nenhum estudo programado para hoje</p>
+                </div>
+              )}
+
+              {/* Upcoming days */}
+              {upcomingPlans.length > 1 && (
+                <div>
+                  <h3 className="mb-2 text-sm font-semibold text-foreground">📋 Próximos Dias</h3>
+                  <div className="space-y-1.5">
+                    {upcomingPlans.slice(1).map((day, i) => (
+                      <div key={i} className="flex items-center justify-between rounded-lg border px-3 py-2">
+                        <div className="flex items-center gap-2">
+                          <span className="text-xs font-medium text-muted-foreground">{day.dayOfWeek}</span>
+                          <span className="text-xs text-muted-foreground">
+                            {new Date(day.date + "T12:00:00").toLocaleDateString("pt-BR", { day: "2-digit", month: "2-digit" })}
+                          </span>
+                        </div>
+                        <div className="flex gap-1">
+                          {day.blocks.map((b, j) => (
+                            <span key={j} className="rounded bg-primary/10 px-1.5 py-0.5 text-[10px] font-medium text-primary">
+                              {b.subject.split(" ")[0]}
+                            </span>
+                          ))}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+          ) : (
+            <div className="rounded-lg border border-dashed bg-muted/20 p-8 text-center">
+              <CalendarDays className="mx-auto mb-3 h-10 w-10 text-muted-foreground/50" />
+              <p className="font-medium text-foreground">Nenhum planejamento criado</p>
+              <p className="mt-1 text-sm text-muted-foreground">
+                Crie seu plano de estudos personalizado com base no edital do seu concurso.
+              </p>
+              <Button className="mt-4 gap-1.5" onClick={() => navigate("/planning")}>
+                <CalendarDays className="h-4 w-4" /> Criar Planejamento
+              </Button>
+            </div>
+          )}
         </div>
       </div>
     </Layout>
