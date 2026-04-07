@@ -44,24 +44,7 @@ export default function PlanListView({ plans }: Props) {
               {day.blocks.map((block, bi) => {
                 const Icon = TYPE_ICONS[block.type] || BookOpen;
                 return (
-                  <div key={bi} className="flex items-center gap-4 py-3">
-                    <div
-                      className={`flex h-8 w-8 items-center justify-center rounded-lg ${
-                        block.type === "estudo"
-                          ? "bg-primary/10 text-primary"
-                          : block.type === "questoes"
-                          ? "bg-highlight/10 text-highlight"
-                          : "bg-secondary/10 text-secondary"
-                      }`}
-                    >
-                      <Icon className="h-4 w-4" />
-                    </div>
-                    <div className="flex-1">
-                      <p className="text-sm font-medium text-foreground">{block.subject}</p>
-                      <p className="text-xs capitalize text-muted-foreground">{block.type}</p>
-                    </div>
-                    <span className="text-sm font-bold text-foreground">{block.duration} min</span>
-                  </div>
+                  <ExpandableBlock key={bi} block={block} Icon={Icon} />
                 );
               })}
             </div>
