@@ -1,8 +1,9 @@
 import { useState } from "react";
 import { DayPlan, StudyBlock } from "@/data/planningData";
 import { Badge } from "@/components/ui/badge";
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import { ChevronLeft, ChevronRight, BookOpen, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 
 // Soft pastel palette for subjects — cycles through for variety
 const SUBJECT_COLORS = [
