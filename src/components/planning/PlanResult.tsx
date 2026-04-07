@@ -66,6 +66,15 @@ export default function PlanResult({ plans, input, onRegenerate, onEdit, onSave,
           <Button size="sm" onClick={handleDownloadPDF} className="gap-1.5 bg-highlight text-highlight-foreground hover:bg-highlight/90">
             <Download className="h-3.5 w-3.5" /> Baixar PDF
           </Button>
+          <Button
+            size="sm"
+            onClick={onSave}
+            disabled={isSaved}
+            className={`gap-1.5 ${isSaved ? "bg-green-600 hover:bg-green-600 text-white" : "bg-primary text-primary-foreground hover:bg-primary/90"}`}
+          >
+            {isSaved ? <CheckCircle2 className="h-3.5 w-3.5" /> : <Save className="h-3.5 w-3.5" />}
+            {isSaved ? "Salvo" : "Salvar"}
+          </Button>
         </div>
       </div>
 
