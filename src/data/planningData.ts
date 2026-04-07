@@ -33,6 +33,7 @@ export interface StudyBlock {
   disciplinaId: string;
   duration: number; // minutes
   type: "estudo" | "revisao" | "questoes";
+  assuntos: string[];
 }
 
 export interface DayPlan {
