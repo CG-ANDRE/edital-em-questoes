@@ -1,6 +1,12 @@
+import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import Layout from "@/components/Layout";
 import { user } from "@/data/mockData";
-import { Flame, Zap, Target, CheckCircle2, XCircle, Star, TrendingUp } from "lucide-react";
+import { editais, DayPlan, PlanningInput } from "@/data/planningData";
+import { Flame, Zap, Target, CheckCircle2, XCircle, Star, TrendingUp, CalendarDays, BookOpen, Clock, ArrowRight, GraduationCap } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Progress } from "@/components/ui/progress";
 
 function CircularProgress({ value, max, size = 120 }: { value: number; max: number; size?: number }) {
   const radius = (size - 12) / 2;
