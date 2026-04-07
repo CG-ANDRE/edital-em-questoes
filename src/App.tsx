@@ -12,6 +12,17 @@ import Contact from "./pages/Contact";
 import Materials from "./pages/Materials";
 import Plans from "./pages/Plans";
 import NotFound from "./pages/NotFound";
+import AdminDashboard from "./pages/admin/AdminDashboard";
+import AdminStudents from "./pages/admin/AdminStudents";
+import AdminStudentDetail from "./pages/admin/AdminStudentDetail";
+import AdminSubscriptions from "./pages/admin/AdminSubscriptions";
+import AdminContests from "./pages/admin/AdminContests";
+import AdminMaterials from "./pages/admin/AdminMaterials";
+import AdminQuestions from "./pages/admin/AdminQuestions";
+import AdminFeedback from "./pages/admin/AdminFeedback";
+import AdminReports from "./pages/admin/AdminReports";
+import AdminMonitoring from "./pages/admin/AdminMonitoring";
+import AdminSettings from "./pages/admin/AdminSettings";
 
 const queryClient = new QueryClient();
 
@@ -31,6 +42,18 @@ const App = () => (
           <Route path="/contact" element={<Contact />} />
           <Route path="/materials" element={<Materials />} />
           <Route path="/plans" element={<Plans />} />
+          {/* Admin routes */}
+          <Route path="/admin" element={<AdminDashboard />} />
+          <Route path="/admin/students" element={<AdminStudents />} />
+          <Route path="/admin/students/:id" element={<AdminStudentDetail />} />
+          <Route path="/admin/subscriptions" element={<AdminSubscriptions />} />
+          <Route path="/admin/contests" element={<AdminContests />} />
+          <Route path="/admin/materials" element={<AdminMaterials />} />
+          <Route path="/admin/questions" element={<AdminQuestions />} />
+          <Route path="/admin/feedback" element={<AdminFeedback />} />
+          <Route path="/admin/reports" element={<AdminReports />} />
+          <Route path="/admin/monitoring" element={<AdminMonitoring />} />
+          <Route path="/admin/settings" element={<AdminSettings />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
