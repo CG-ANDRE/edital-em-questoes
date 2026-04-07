@@ -1,4 +1,5 @@
 import { useState, useRef } from "react";
+import { useNavigate } from "react-router-dom";
 import { DayPlan, PlanningInput, editais } from "@/data/planningData";
 import PlanCalendarView from "./PlanCalendarView";
 import PlanListView from "./PlanListView";
@@ -6,7 +7,7 @@ import RevisionTimeline from "./RevisionTimeline";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { CalendarDays, List, Printer, Download, RefreshCw, Settings2, Save, CheckCircle2 } from "lucide-react";
+import { CalendarDays, List, Printer, Download, RefreshCw, Settings2, Save, CheckCircle2, Play } from "lucide-react";
 
 interface Props {
   plans: DayPlan[];
