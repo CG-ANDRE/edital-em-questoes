@@ -56,6 +56,9 @@ export default function PlanResult({ plans, input, onRegenerate, onEdit, onSave,
           </div>
         </div>
         <div className="mt-4 flex flex-wrap gap-2">
+          <Button size="sm" onClick={() => navigate("/study-session")} className="gap-1.5 bg-primary text-primary-foreground hover:bg-primary/90">
+            <Play className="h-3.5 w-3.5" /> Iniciar Estudo
+          </Button>
           <Button variant="outline" size="sm" onClick={onEdit} className="gap-1.5">
             <Settings2 className="h-3.5 w-3.5" /> Editar
           </Button>
@@ -72,7 +75,7 @@ export default function PlanResult({ plans, input, onRegenerate, onEdit, onSave,
             size="sm"
             onClick={onSave}
             disabled={isSaved}
-            className={`gap-1.5 ${isSaved ? "bg-green-600 hover:bg-green-600 text-white" : "bg-primary text-primary-foreground hover:bg-primary/90"}`}
+            className={`gap-1.5 ${isSaved ? "bg-green-600 hover:bg-green-600 text-white" : "bg-secondary text-secondary-foreground hover:bg-secondary/90"}`}
           >
             {isSaved ? <CheckCircle2 className="h-3.5 w-3.5" /> : <Save className="h-3.5 w-3.5" />}
             {isSaved ? "Salvo" : "Salvar"}
