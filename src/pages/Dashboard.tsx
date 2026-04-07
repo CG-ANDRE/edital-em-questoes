@@ -33,6 +33,28 @@ function CircularProgress({ value, max, size = 120 }: { value: number; max: numb
 }
 
 export default function Dashboard() {
+  const navigate = useNavigate();
+  const [savedPlan, setSavedPlan] = useState<{ plans: DayPlan[]; input: PlanningInput } | null>(null);
+
+  useEffect(() => {
+    try {
+      const plansRaw = localStorage.getItem("legisquest_study_plan");
+      const inputRaw = localStorage.getItem("legisquest_study_plan_input");
+      if (plansRaw && inputRaw) {
+        setSavedPlan({ plans: JSON.parse(plansRaw), input: JSON.parse(inputRaw) });
+      }
+    } catch { /* ignore */ }
+  }, []);
+
+  const edital = savedPlan ? editais[savedPlan.input.concursoId] : null;
+  const todayStr = new Date().toISOString().split("T")[0];
+  const todayPlan = savedPlan?.plans.find(p => p.date === todayStr);
+  const upcomingPlans = savedPlan?.plans.filter(p => p.date >= todayStr).slice(0, 5) || [];
+  const totalHours = savedPlan ? savedPlan.plans.reduce((s, p) => s + p.blocks.reduce((bs, b) => bs + b.duration, 0), 0) / 60 : 0;
+  const totalDays = savedPlan?.plans.length || 0;
+  const daysCompleted = savedPlan?.plans.filter(p => p.date < todayStr).length || 0;
+  const progressPercent = totalDays > 0 ? Math.round((daysCompleted / totalDays) * 100) : 0;
+
   return (
     <Layout>
       <div className="space-y-6">
