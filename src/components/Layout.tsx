@@ -12,6 +12,7 @@ const navItems = [
 
 export default function Layout({ children }: { children: ReactNode }) {
   const location = useLocation();
+  const navigate = useNavigate();
 
   return (
     <div className="min-h-screen bg-background">
