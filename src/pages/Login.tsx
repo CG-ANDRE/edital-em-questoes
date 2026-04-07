@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Eye, EyeOff, LogIn } from "lucide-react";
+import logoCM from "@/assets/logo-cm.png";
 
 export default function Login() {
   const navigate = useNavigate();
@@ -23,8 +24,8 @@ export default function Login() {
     <div className="flex min-h-screen items-center justify-center bg-background px-4">
       <div className="w-full max-w-md">
         <div className="mb-8 text-center">
-          <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-primary shadow-lg">
-            <span className="font-heading text-2xl font-bold text-primary-foreground">LQ</span>
+          <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center">
+            <img src={logoCM} alt="Caderno Mapeado" className="h-16 w-16 rounded-2xl" />
           </div>
           <h1 className="font-heading text-2xl font-bold text-foreground">LegisQuest</h1>
           <p className="mt-1 text-sm text-muted-foreground">Questões de Legislação para Concursos</p>
@@ -97,7 +98,7 @@ export default function Login() {
         </div>
 
         <p className="mt-6 text-center text-xs text-muted-foreground">
-          © 2024 LegisQuest
+          © 2026 - Caderno Mapeado
         </p>
       </div>
     </div>
