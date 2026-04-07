@@ -1,5 +1,5 @@
 export const user = {
-  name: "Ana Lima",
+  name: "Públio",
   email: "ana.lima@email.com",
   plan: "FREE" as const,
   streak: 3,

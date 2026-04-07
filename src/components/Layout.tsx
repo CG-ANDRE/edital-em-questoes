@@ -63,6 +63,14 @@ export default function Layout({ children }: { children: ReactNode }) {
             <div className="flex h-9 w-9 items-center justify-center rounded-full bg-primary text-sm font-bold text-primary-foreground">
               {user.name.split(" ").map(n => n[0]).join("")}
             </div>
+            <button
+              onClick={() => navigate("/login")}
+              className="flex items-center gap-1.5 rounded-lg px-3 py-2 text-sm font-medium text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+              title="Sair"
+            >
+              <LogOut className="h-4 w-4" />
+              <span className="hidden md:inline">Sair</span>
+            </button>
           </div>
         </div>
       </header>
