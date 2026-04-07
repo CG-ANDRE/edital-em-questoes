@@ -11,6 +11,7 @@ export interface Disciplina {
   peso: number; // 1-5
   horasRecomendadas: number;
   categoria: "pesada" | "media" | "leve";
+  assuntos: string[];
 }
 
 export interface PlanningInput {
