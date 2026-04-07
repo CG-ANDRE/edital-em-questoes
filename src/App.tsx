@@ -13,6 +13,7 @@ import Materials from "./pages/Materials";
 import Plans from "./pages/Plans";
 import Planning from "./pages/Planning";
 import NotFound from "./pages/NotFound";
+import StudySession from "./pages/StudySession";
 import AdminDashboard from "./pages/admin/AdminDashboard";
 import AdminStudents from "./pages/admin/AdminStudents";
 import AdminStudentDetail from "./pages/admin/AdminStudentDetail";
