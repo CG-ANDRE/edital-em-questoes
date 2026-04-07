@@ -7,6 +7,8 @@ const navItems = [
   { path: "/dashboard", label: "Início", icon: Home },
   { path: "/practice", label: "Questões", icon: FileQuestion },
   { path: "/performance", label: "Desempenho", icon: BarChart3 },
+  { path: "/materials", label: "Materiais", icon: BookOpen },
+  { path: "/contact", label: "Contato", icon: Mail },
   { path: "/plans", label: "Planos", icon: Crown },
 ];
 
