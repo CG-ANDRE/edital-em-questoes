@@ -271,6 +271,7 @@ export function generateStudyPlan(input: PlanningInput): DayPlan[] {
         disciplinaId: "revisao",
         duration: Math.min(remainingMinutes, 30),
         type: "revisao",
+        assuntos: ["Revisar conteúdos estudados no dia"],
       });
     }
 
