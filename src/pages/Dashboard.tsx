@@ -222,6 +222,9 @@ export default function Dashboard() {
                       </div>
                     ))}
                   </div>
+                  <Button size="sm" className="mt-3 w-full gap-1.5" onClick={() => navigate("/study-session")}>
+                    <Play className="h-4 w-4" /> Iniciar Estudo de Hoje
+                  </Button>
                 </div>
               ) : (
                 <div className="rounded-lg border border-dashed bg-muted/20 p-4 text-center">
