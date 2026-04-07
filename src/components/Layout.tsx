@@ -1,6 +1,6 @@
 import { ReactNode } from "react";
-import { Link, useLocation } from "react-router-dom";
-import { Home, FileQuestion, BarChart3, Crown, User, Flame } from "lucide-react";
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import { Home, FileQuestion, BarChart3, Crown, Flame, LogOut } from "lucide-react";
 import { user } from "@/data/mockData";
 
 const navItems = [
@@ -12,6 +12,7 @@ const navItems = [
 
 export default function Layout({ children }: { children: ReactNode }) {
   const location = useLocation();
+  const navigate = useNavigate();
 
   return (
     <div className="min-h-screen bg-background">
@@ -62,6 +63,14 @@ export default function Layout({ children }: { children: ReactNode }) {
             <div className="flex h-9 w-9 items-center justify-center rounded-full bg-primary text-sm font-bold text-primary-foreground">
               {user.name.split(" ").map(n => n[0]).join("")}
             </div>
+            <button
+              onClick={() => navigate("/login")}
+              className="flex items-center gap-1.5 rounded-lg px-3 py-2 text-sm font-medium text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+              title="Sair"
+            >
+              <LogOut className="h-4 w-4" />
+              <span className="hidden md:inline">Sair</span>
+            </button>
           </div>
         </div>
       </header>
