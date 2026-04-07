@@ -2,16 +2,19 @@ import { useState, useRef } from "react";
 import { DayPlan, PlanningInput, editais } from "@/data/planningData";
 import PlanCalendarView from "./PlanCalendarView";
 import PlanListView from "./PlanListView";
+import RevisionTimeline from "./RevisionTimeline";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { CalendarDays, List, Printer, Download, RefreshCw, Settings2 } from "lucide-react";
+import { CalendarDays, List, Printer, Download, RefreshCw, Settings2, Save, CheckCircle2 } from "lucide-react";
 
 interface Props {
   plans: DayPlan[];
   input: PlanningInput;
   onRegenerate: () => void;
   onEdit: () => void;
+  onSave: () => void;
+  isSaved: boolean;
 }
 
 export default function PlanResult({ plans, input, onRegenerate, onEdit }: Props) {
