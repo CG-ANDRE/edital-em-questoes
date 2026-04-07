@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Eye, EyeOff, LogIn } from "lucide-react";
+import logoCM from "@/assets/logo-cm.png";
 
 export default function Login() {
   const navigate = useNavigate();
