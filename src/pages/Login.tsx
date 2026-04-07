@@ -97,7 +97,7 @@ export default function Login() {
         </div>
 
         <p className="mt-6 text-center text-xs text-muted-foreground">
-          © 2024 CM Cursos Online — Caderno Mapeado
+          © 2024 LegisQuest
         </p>
       </div>
     </div>

@@ -20,10 +20,10 @@ export default function Layout({ children }: { children: ReactNode }) {
         <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4">
           <Link to="/dashboard" className="flex items-center gap-2">
             <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-primary">
-              <span className="font-heading text-lg font-bold text-primary-foreground">CM</span>
+              <span className="font-heading text-lg font-bold text-primary-foreground">LQ</span>
             </div>
             <div className="hidden sm:block">
-              <p className="font-heading text-sm font-bold leading-tight text-primary">Legislação Mapeada</p>
+              <p className="font-heading text-sm font-bold leading-tight text-primary">LegisQuest</p>
               <p className="text-xs text-muted-foreground">Questões</p>
             </div>
           </Link>
