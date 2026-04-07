@@ -36,6 +36,8 @@ interface Props {
 }
 
 export default function PlanCalendarView({ plans }: Props) {
+  const [currentWeekIdx, setCurrentWeekIdx] = useState(0);
+
   // Build color map for subjects
   const subjectColorMap = new Map<string, (typeof SUBJECT_COLORS)[0]>();
   let colorIdx = 0;
@@ -82,9 +84,6 @@ export default function PlanCalendarView({ plans }: Props) {
     cursor.setDate(cursor.getDate() + 1);
   }
   if (currentWeek.length > 0) weeks.push(currentWeek);
-
-  // Pagination by week
-  const [currentWeekIdx, setCurrentWeekIdx] = useState(0);
   const visibleWeeks = weeks.length <= 2 ? weeks : [weeks[currentWeekIdx]];
   const showPagination = weeks.length > 2;
 
