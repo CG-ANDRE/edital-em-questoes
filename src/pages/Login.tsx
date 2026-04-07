@@ -24,10 +24,10 @@ export default function Login() {
       <div className="w-full max-w-md">
         <div className="mb-8 text-center">
           <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-primary shadow-lg">
-            <span className="font-heading text-2xl font-bold text-primary-foreground">CM</span>
+            <span className="font-heading text-2xl font-bold text-primary-foreground">LQ</span>
           </div>
-          <h1 className="font-heading text-2xl font-bold text-foreground">Legislação Mapeada</h1>
-          <p className="mt-1 text-sm text-muted-foreground">Questões — Caderno Mapeado</p>
+          <h1 className="font-heading text-2xl font-bold text-foreground">LegisQuest</h1>
+          <p className="mt-1 text-sm text-muted-foreground">Questões de Legislação para Concursos</p>
         </div>
 
         <div className="rounded-2xl border bg-card p-8 shadow-sm">
@@ -97,7 +97,7 @@ export default function Login() {
         </div>
 
         <p className="mt-6 text-center text-xs text-muted-foreground">
-          © 2024 CM Cursos Online — Caderno Mapeado
+          © 2024 LegisQuest
         </p>
       </div>
     </div>
