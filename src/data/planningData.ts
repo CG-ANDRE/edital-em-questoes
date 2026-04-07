@@ -245,6 +245,7 @@ export function generateStudyPlan(input: PlanningInput): DayPlan[] {
         disciplinaId: disc.id,
         duration: studyTime,
         type: "estudo",
+        assuntos: disc.assuntos || [],
       });
       remainingMinutes -= studyTime;
       queueIndex++;
@@ -257,6 +258,7 @@ export function generateStudyPlan(input: PlanningInput): DayPlan[] {
           disciplinaId: disc.id,
           duration: questionTime,
           type: "questoes",
+          assuntos: disc.assuntos || [],
         });
         remainingMinutes -= questionTime;
       }
