@@ -1,6 +1,7 @@
+import { useState } from "react";
 import { DayPlan } from "@/data/planningData";
 import { Badge } from "@/components/ui/badge";
-import { BookOpen, HelpCircle, RotateCcw, Clock } from "lucide-react";
+import { BookOpen, HelpCircle, RotateCcw, Clock, ChevronDown, ChevronUp } from "lucide-react";
 
 const TYPE_ICONS: Record<string, typeof BookOpen> = {
   estudo: BookOpen,
