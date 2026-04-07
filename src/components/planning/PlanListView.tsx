@@ -9,8 +9,6 @@ const TYPE_ICONS: Record<string, typeof BookOpen> = {
   revisao: RotateCcw,
 };
 
-function formatDate(dateStr: string) {
-
 function ExpandableBlock({ block, Icon }: { block: DayPlan["blocks"][0]; Icon: typeof BookOpen }) {
   const [open, setOpen] = useState(false);
   return (
@@ -53,7 +51,7 @@ function ExpandableBlock({ block, Icon }: { block: DayPlan["blocks"][0]; Icon: t
   );
 }
 
-
+function formatDate(dateStr: string) {
   const d = new Date(dateStr + "T00:00:00");
   return d.toLocaleDateString("pt-BR", { weekday: "long", day: "2-digit", month: "long" });
 }
