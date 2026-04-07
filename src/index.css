@@ -67,3 +67,15 @@
     font-family: 'Nunito', sans-serif;
   }
 }
+
+@media print {
+  header, nav, .no-print {
+    display: none !important;
+  }
+  body {
+    background: white !important;
+  }
+  .print-content {
+    padding: 0 !important;
+  }
+}

@@ -7,7 +7,7 @@ import { user } from "@/data/mockData";
 import { PlanningInput, DayPlan, generateStudyPlan } from "@/data/planningData";
 
 export default function Planning() {
-  const isPremium = user.plan === "PREMIUM";
+  const isPremium = (user.plan as string) === "PREMIUM";
   const [plans, setPlans] = useState<DayPlan[] | null>(null);
   const [lastInput, setLastInput] = useState<PlanningInput | null>(null);
 

@@ -8,6 +8,7 @@ const navItems = [
   { path: "/practice", label: "Questões", icon: FileQuestion },
   { path: "/performance", label: "Desempenho", icon: BarChart3 },
   { path: "/materials", label: "Materiais", icon: BookOpen },
+  { path: "/planning", label: "Planejamento", icon: CalendarDays },
   { path: "/contact", label: "Contato", icon: Mail },
   { path: "/plans", label: "Planos", icon: Crown },
 ];
