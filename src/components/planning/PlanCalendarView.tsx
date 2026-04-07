@@ -1,8 +1,9 @@
 import { useState } from "react";
 import { DayPlan, StudyBlock } from "@/data/planningData";
 import { Badge } from "@/components/ui/badge";
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import { ChevronLeft, ChevronRight, BookOpen, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 
 // Soft pastel palette for subjects — cycles through for variety
 const SUBJECT_COLORS = [
@@ -199,17 +200,46 @@ export default function PlanCalendarView({ plans }: Props) {
                       {day.blocks.map((block, bi) => {
                         const colors = subjectColorMap.get(block.disciplinaId) || SUBJECT_COLORS[0];
                         return (
-                          <div
-                            key={bi}
-                            className={`rounded-md border px-2 py-1.5 ${colors.bg} ${colors.border}`}
-                          >
-                            <p className={`text-[11px] font-bold leading-tight ${colors.text}`}>
-                              {block.subject}
-                            </p>
-                            <p className={`text-[10px] ${colors.text} opacity-70`}>
-                              {block.duration} min
-                            </p>
-                          </div>
+                          <Popover key={bi}>
+                            <PopoverTrigger asChild>
+                              <button
+                                className={`w-full rounded-md border px-2 py-1.5 text-left transition-shadow hover:shadow-md ${colors.bg} ${colors.border}`}
+                              >
+                                <p className={`text-[11px] font-bold leading-tight ${colors.text}`}>
+                                  {block.subject}
+                                </p>
+                                <p className={`text-[10px] ${colors.text} opacity-70`}>
+                                  {block.duration} min
+                                </p>
+                              </button>
+                            </PopoverTrigger>
+                            <PopoverContent className="w-72 p-0" align="start">
+                              <div className={`rounded-t-lg border-b px-4 py-3 ${colors.bg}`}>
+                                <div className="flex items-center gap-2">
+                                  <BookOpen className={`h-4 w-4 ${colors.text}`} />
+                                  <p className={`text-sm font-bold ${colors.text}`}>{block.subject}</p>
+                                </div>
+                                <p className={`mt-0.5 text-xs ${colors.text} opacity-70`}>
+                                  {block.duration} min • {block.type === "estudo" ? "Estudo" : block.type === "questoes" ? "Questões" : "Revisão"}
+                                </p>
+                              </div>
+                              <div className="px-4 py-3">
+                                <p className="mb-2 text-xs font-bold text-foreground">📋 Assuntos do Edital</p>
+                                {block.assuntos && block.assuntos.length > 0 ? (
+                                  <ul className="space-y-1.5">
+                                    {block.assuntos.map((assunto, ai) => (
+                                      <li key={ai} className="flex items-start gap-2 text-xs text-muted-foreground">
+                                        <span className="mt-0.5 h-1.5 w-1.5 shrink-0 rounded-full bg-primary" />
+                                        {assunto}
+                                      </li>
+                                    ))}
+                                  </ul>
+                                ) : (
+                                  <p className="text-xs text-muted-foreground">Nenhum assunto cadastrado.</p>
+                                )}
+                              </div>
+                            </PopoverContent>
+                          </Popover>
                         );
                       })}
                     </div>
