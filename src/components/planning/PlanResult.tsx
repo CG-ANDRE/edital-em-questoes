@@ -1,4 +1,5 @@
 import { useState, useRef } from "react";
+import { useNavigate } from "react-router-dom";
 import { DayPlan, PlanningInput, editais } from "@/data/planningData";
 import PlanCalendarView from "./PlanCalendarView";
 import PlanListView from "./PlanListView";
@@ -6,7 +7,7 @@ import RevisionTimeline from "./RevisionTimeline";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { CalendarDays, List, Printer, Download, RefreshCw, Settings2, Save, CheckCircle2 } from "lucide-react";
+import { CalendarDays, List, Printer, Download, RefreshCw, Settings2, Save, CheckCircle2, Play } from "lucide-react";
 
 interface Props {
   plans: DayPlan[];
@@ -18,6 +19,7 @@ interface Props {
 }
 
 export default function PlanResult({ plans, input, onRegenerate, onEdit, onSave, isSaved }: Props) {
+  const navigate = useNavigate();
   const [view, setView] = useState<"calendar" | "list">("calendar");
   const printRef = useRef<HTMLDivElement>(null);
   const edital = editais[input.concursoId];
@@ -54,6 +56,9 @@ export default function PlanResult({ plans, input, onRegenerate, onEdit, onSave,
           </div>
         </div>
         <div className="mt-4 flex flex-wrap gap-2">
+          <Button size="sm" onClick={() => navigate("/study-session")} className="gap-1.5 bg-primary text-primary-foreground hover:bg-primary/90">
+            <Play className="h-3.5 w-3.5" /> Iniciar Estudo
+          </Button>
           <Button variant="outline" size="sm" onClick={onEdit} className="gap-1.5">
             <Settings2 className="h-3.5 w-3.5" /> Editar
           </Button>
@@ -70,7 +75,7 @@ export default function PlanResult({ plans, input, onRegenerate, onEdit, onSave,
             size="sm"
             onClick={onSave}
             disabled={isSaved}
-            className={`gap-1.5 ${isSaved ? "bg-green-600 hover:bg-green-600 text-white" : "bg-primary text-primary-foreground hover:bg-primary/90"}`}
+            className={`gap-1.5 ${isSaved ? "bg-green-600 hover:bg-green-600 text-white" : "bg-secondary text-secondary-foreground hover:bg-secondary/90"}`}
           >
             {isSaved ? <CheckCircle2 className="h-3.5 w-3.5" /> : <Save className="h-3.5 w-3.5" />}
             {isSaved ? "Salvo" : "Salvar"}

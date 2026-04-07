@@ -13,6 +13,7 @@ import Materials from "./pages/Materials";
 import Plans from "./pages/Plans";
 import Planning from "./pages/Planning";
 import NotFound from "./pages/NotFound";
+import StudySession from "./pages/StudySession";
 import AdminDashboard from "./pages/admin/AdminDashboard";
 import AdminStudents from "./pages/admin/AdminStudents";
 import AdminStudentDetail from "./pages/admin/AdminStudentDetail";
@@ -44,6 +45,7 @@ const App = () => (
           <Route path="/materials" element={<Materials />} />
           <Route path="/plans" element={<Plans />} />
           <Route path="/planning" element={<Planning />} />
+          <Route path="/study-session" element={<StudySession />} />
           {/* Admin routes */}
           <Route path="/admin" element={<AdminDashboard />} />
           <Route path="/admin/students" element={<AdminStudents />} />
