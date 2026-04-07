@@ -1,6 +1,6 @@
 import { ReactNode } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { Home, FileQuestion, BarChart3, Crown, Flame, LogOut } from "lucide-react";
+import { Home, FileQuestion, BarChart3, Crown, Flame, LogOut, Mail, BookOpen } from "lucide-react";
 import { user } from "@/data/mockData";
 
 const navItems = [
