@@ -2,19 +2,22 @@ import { useState, useRef } from "react";
 import { DayPlan, PlanningInput, editais } from "@/data/planningData";
 import PlanCalendarView from "./PlanCalendarView";
 import PlanListView from "./PlanListView";
+import RevisionTimeline from "./RevisionTimeline";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { CalendarDays, List, Printer, Download, RefreshCw, Settings2 } from "lucide-react";
+import { CalendarDays, List, Printer, Download, RefreshCw, Settings2, Save, CheckCircle2 } from "lucide-react";
 
 interface Props {
   plans: DayPlan[];
   input: PlanningInput;
   onRegenerate: () => void;
   onEdit: () => void;
+  onSave: () => void;
+  isSaved: boolean;
 }
 
-export default function PlanResult({ plans, input, onRegenerate, onEdit }: Props) {
+export default function PlanResult({ plans, input, onRegenerate, onEdit, onSave, isSaved }: Props) {
   const [view, setView] = useState<"calendar" | "list">("calendar");
   const printRef = useRef<HTMLDivElement>(null);
   const edital = editais[input.concursoId];
@@ -63,6 +66,15 @@ export default function PlanResult({ plans, input, onRegenerate, onEdit }: Props
           <Button size="sm" onClick={handleDownloadPDF} className="gap-1.5 bg-highlight text-highlight-foreground hover:bg-highlight/90">
             <Download className="h-3.5 w-3.5" /> Baixar PDF
           </Button>
+          <Button
+            size="sm"
+            onClick={onSave}
+            disabled={isSaved}
+            className={`gap-1.5 ${isSaved ? "bg-green-600 hover:bg-green-600 text-white" : "bg-primary text-primary-foreground hover:bg-primary/90"}`}
+          >
+            {isSaved ? <CheckCircle2 className="h-3.5 w-3.5" /> : <Save className="h-3.5 w-3.5" />}
+            {isSaved ? "Salvo" : "Salvar"}
+          </Button>
         </div>
       </div>
 
@@ -94,6 +106,9 @@ export default function PlanResult({ plans, input, onRegenerate, onEdit }: Props
           <PlanListView plans={plans} />
         )}
       </div>
+
+      {/* Revision timeline */}
+      <RevisionTimeline plans={plans} />
     </div>
   );
 }
