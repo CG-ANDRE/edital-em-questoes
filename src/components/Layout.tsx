@@ -1,6 +1,6 @@
 import { ReactNode } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { Home, FileQuestion, BarChart3, Crown, Flame, LogOut, Mail, BookOpen } from "lucide-react";
+import { Home, FileQuestion, BarChart3, Crown, Flame, LogOut, Mail, BookOpen, CalendarDays } from "lucide-react";
 import { user } from "@/data/mockData";
 
 const navItems = [
@@ -8,6 +8,7 @@ const navItems = [
   { path: "/practice", label: "Questões", icon: FileQuestion },
   { path: "/performance", label: "Desempenho", icon: BarChart3 },
   { path: "/materials", label: "Materiais", icon: BookOpen },
+  { path: "/planning", label: "Planejamento", icon: CalendarDays },
   { path: "/contact", label: "Contato", icon: Mail },
   { path: "/plans", label: "Planos", icon: Crown },
 ];
