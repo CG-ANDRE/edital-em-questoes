@@ -19,6 +19,7 @@ interface Props {
 }
 
 export default function PlanResult({ plans, input, onRegenerate, onEdit, onSave, isSaved }: Props) {
+  const navigate = useNavigate();
   const [view, setView] = useState<"calendar" | "list">("calendar");
   const printRef = useRef<HTMLDivElement>(null);
   const edital = editais[input.concursoId];
