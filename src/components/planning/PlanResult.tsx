@@ -106,6 +106,9 @@ export default function PlanResult({ plans, input, onRegenerate, onEdit, onSave,
           <PlanListView plans={plans} />
         )}
       </div>
+
+      {/* Revision timeline */}
+      <RevisionTimeline plans={plans} />
     </div>
   );
 }
