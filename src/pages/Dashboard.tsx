@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import Layout from "@/components/Layout";
 import { user } from "@/data/mockData";
 import { editais, DayPlan, PlanningInput } from "@/data/planningData";
-import { Flame, Zap, Target, CheckCircle2, XCircle, Star, TrendingUp, CalendarDays, BookOpen, Clock, ArrowRight, GraduationCap } from "lucide-react";
+import { Flame, Zap, Target, CheckCircle2, XCircle, Star, TrendingUp, CalendarDays, BookOpen, Clock, ArrowRight, GraduationCap, Play } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
