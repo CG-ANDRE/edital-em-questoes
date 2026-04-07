@@ -8,6 +8,8 @@ import Dashboard from "./pages/Dashboard";
 import Practice from "./pages/Practice";
 import QuestionPage from "./pages/QuestionPage";
 import Performance from "./pages/Performance";
+import Contact from "./pages/Contact";
+import Materials from "./pages/Materials";
 import Plans from "./pages/Plans";
 import NotFound from "./pages/NotFound";
 
