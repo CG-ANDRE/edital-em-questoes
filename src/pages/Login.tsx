@@ -12,7 +12,10 @@ export default function Login() {
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
-    if (email === "teste@teste.com" && password === "123456") {
+    if (email === "admin@legisquest.com" && password === "admin123") {
+      setError("");
+      navigate("/admin");
+    } else if (email === "teste@teste.com" && password === "123456") {
       setError("");
       navigate("/dashboard");
     } else {
