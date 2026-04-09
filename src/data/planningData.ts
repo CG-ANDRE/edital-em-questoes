@@ -20,7 +20,7 @@ export interface PlanningInput {
   banca: string;
   studyEveryDay: boolean;
   studyDays: string[];
-  hoursPerDay: number;
+  minutesPerDay: number;
   examDate: string | null;
   startDate: string;
   level: "iniciante" | "intermediario" | "avancado";
@@ -28,19 +28,47 @@ export interface PlanningInput {
   prioritySubjects: string[];
 }
 
-export interface StudyBlock {
+export interface QuestionBlock {
   subject: string;
   disciplinaId: string;
-  duration: number; // minutes
-  type: "estudo" | "revisao" | "questoes";
+  questions: number; // number of questions
   assuntos: string[];
 }
 
 export interface DayPlan {
   date: string;
   dayOfWeek: string;
-  blocks: StudyBlock[];
+  blocks: QuestionBlock[];
+  totalQuestions: number;
   cyclePosition: number;
+}
+
+// Conversion rates: minutes → questions by level
+const QUESTIONS_PER_MINUTE: Record<string, number> = {
+  iniciante: 0.5,   // ~2 min per question
+  intermediario: 0.75, // ~1.3 min per question
+  avancado: 1.0,    // ~1 min per question
+};
+
+export function minutesToQuestions(minutes: number, level: string): number {
+  const rate = QUESTIONS_PER_MINUTE[level] || 0.75;
+  return Math.round(minutes * rate);
+}
+
+export function getIntensityLabel(minutes: number): { label: string; emoji: string; color: string } {
+  if (minutes <= 15) return { label: "Leve", emoji: "🌱", color: "text-green-600" };
+  if (minutes <= 30) return { label: "Moderado", emoji: "📚", color: "text-blue-600" };
+  if (minutes <= 60) return { label: "Intenso", emoji: "🔥", color: "text-orange-600" };
+  return { label: "Avançado", emoji: "🚀", color: "text-red-600" };
+}
+
+export function getProjections(questionsPerDay: number, daysPerWeek: number) {
+  const perWeek = questionsPerDay * daysPerWeek;
+  return {
+    month1: perWeek * 4,
+    month2: perWeek * 8,
+    month3: perWeek * 12,
+  };
 }
 
 export const editais: Record<string, Edital> = {
@@ -149,63 +177,20 @@ export function generateStudyPlan(input: PlanningInput): DayPlan[] {
   const edital = editais[input.concursoId];
   if (!edital) return [];
 
-  const totalMinutes = input.hoursPerDay * 60;
+  const dailyQuestions = minutesToQuestions(input.minutesPerDay, input.level);
 
   // Build weighted discipline list
   let disciplinas = [...edital.disciplinas].map((d) => {
     let weight = d.peso;
     if (input.prioritySubjects.includes(d.id)) weight += 2;
-    if (input.difficultSubjects.includes(d.id)) weight += 1;
+    if (input.difficultSubjects.includes(d.id)) weight += 1.5;
     return { ...d, weight };
   });
 
-  // Sort by weight desc
   disciplinas.sort((a, b) => b.weight - a.weight);
-
-  // Calculate total weight
   const totalWeight = disciplinas.reduce((s, d) => s + d.weight, 0);
 
-  // Build cycle: assign time proportionally
-  // A cycle is a sequence of study blocks that repeats
-  const cycleLength = Math.max(disciplinas.length, 5);
-
-  // Create cycle slots - each slot has subject + time
-  const cycle: StudyBlock[] = [];
-
-  // Distribute disciplines across cycle positions
-  // Higher weight = more appearances
-  const appearances: Record<string, number> = {};
-  disciplinas.forEach((d) => {
-    appearances[d.id] = Math.max(1, Math.round((d.weight / totalWeight) * cycleLength));
-  });
-
-  // Flatten into cycle order, interleaving heavy and light
-  const heavy = disciplinas.filter((d) => d.categoria === "pesada");
-  const medium = disciplinas.filter((d) => d.categoria === "media");
-  const light = disciplinas.filter((d) => d.categoria === "leve");
-
-  const buildCycleQueue = () => {
-    const queue: Disciplina[] = [];
-    const maxRounds = Math.max(...Object.values(appearances));
-
-    for (let round = 0; round < maxRounds; round++) {
-      // Interleave: heavy, medium, light
-      for (const d of heavy) {
-        if (round < (appearances[d.id] || 0)) queue.push(d);
-      }
-      for (const d of medium) {
-        if (round < (appearances[d.id] || 0)) queue.push(d);
-      }
-      for (const d of light) {
-        if (round < (appearances[d.id] || 0)) queue.push(d);
-      }
-    }
-    return queue;
-  };
-
-  const cycleQueue = buildCycleQueue();
-
-  // Now fill daily plans
+  // Active days
   const activeDays: number[] = input.studyEveryDay
     ? [0, 1, 2, 3, 4, 5, 6]
     : input.studyDays.map((d) => DAY_MAP[d] ?? 0);
@@ -213,73 +198,57 @@ export function generateStudyPlan(input: PlanningInput): DayPlan[] {
   const start = new Date(input.startDate + "T00:00:00");
   const weeksToGenerate = input.examDate
     ? Math.ceil((new Date(input.examDate + "T00:00:00").getTime() - start.getTime()) / (7 * 24 * 60 * 60 * 1000))
-    : 8; // default 8 weeks
+    : 8;
 
-  const totalDays = Math.min(weeksToGenerate * 7, 120); // max ~4 months
+  const totalDaysRange = Math.min(weeksToGenerate * 7, 120);
   const plans: DayPlan[] = [];
-  let queueIndex = 0;
   let cyclePos = 1;
 
-  for (let i = 0; i < totalDays; i++) {
+  // Create a rotation: each day gets 2-3 disciplines with questions distributed by weight
+  const discCount = disciplinas.length;
+
+  for (let i = 0; i < totalDaysRange; i++) {
     const date = new Date(start);
     date.setDate(date.getDate() + i);
     const dayOfWeek = date.getDay();
 
     if (!activeDays.includes(dayOfWeek)) continue;
 
-    const blocks: StudyBlock[] = [];
-    let remainingMinutes = totalMinutes;
+    const blocks: QuestionBlock[] = [];
+    let remainingQuestions = dailyQuestions;
 
-    // Fill blocks from cycle queue
-    while (remainingMinutes >= 25 && queueIndex < cycleQueue.length * 10) {
-      const disc = cycleQueue[queueIndex % cycleQueue.length];
+    // Pick 2-3 disciplines for today based on cycle rotation
+    const numSubjects = dailyQuestions >= 20 ? 3 : 2;
+    const startIdx = (cyclePos - 1) * numSubjects;
 
-      // Time allocation: proportional to weight, min 30min, max 90min
-      const baseTime = Math.round((disc.peso / 5) * 60);
-      const studyTime = Math.min(Math.max(baseTime, 30), Math.min(90, remainingMinutes));
+    for (let j = 0; j < numSubjects && remainingQuestions > 0; j++) {
+      const disc = disciplinas[(startIdx + j) % discCount];
+      // Distribute proportionally to weight
+      const proportion = disc.weight / totalWeight;
+      const questionsForThis = j === numSubjects - 1
+        ? remainingQuestions // last one gets remainder
+        : Math.max(3, Math.round(dailyQuestions * proportion * (numSubjects / 2)));
 
-      if (studyTime > remainingMinutes) break;
+      const finalCount = Math.min(questionsForThis, remainingQuestions);
+      if (finalCount <= 0) continue;
 
       blocks.push({
         subject: disc.name,
         disciplinaId: disc.id,
-        duration: studyTime,
-        type: "estudo",
+        questions: finalCount,
         assuntos: disc.assuntos || [],
       });
-      remainingMinutes -= studyTime;
-      queueIndex++;
-
-      // Add questions block after heavy subjects (if time allows)
-      if (disc.categoria === "pesada" && remainingMinutes >= 20) {
-        const questionTime = Math.min(20, remainingMinutes);
-        blocks.push({
-          subject: `Questões de ${disc.name}`,
-          disciplinaId: disc.id,
-          duration: questionTime,
-          type: "questoes",
-          assuntos: disc.assuntos || [],
-        });
-        remainingMinutes -= questionTime;
-      }
+      remainingQuestions -= finalCount;
     }
 
-    // Add revision block at end if time remains
-    if (remainingMinutes >= 15) {
-      blocks.push({
-        subject: "Revisão do dia",
-        disciplinaId: "revisao",
-        duration: Math.min(remainingMinutes, 30),
-        type: "revisao",
-        assuntos: ["Revisar conteúdos estudados no dia"],
-      });
-    }
-
+    const totalQ = blocks.reduce((s, b) => s + b.questions, 0);
     const dateStr = date.toISOString().split("T")[0];
+
     plans.push({
       date: dateStr,
       dayOfWeek: DAY_NAMES[String(dayOfWeek)],
       blocks,
+      totalQuestions: totalQ,
       cyclePosition: cyclePos,
     });
     cyclePos++;

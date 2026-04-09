@@ -1,11 +1,10 @@
 import { useState } from "react";
-import { DayPlan, StudyBlock } from "@/data/planningData";
+import { DayPlan, QuestionBlock } from "@/data/planningData";
 import { Badge } from "@/components/ui/badge";
-import { ChevronLeft, ChevronRight, BookOpen, X } from "lucide-react";
+import { ChevronLeft, ChevronRight, Target } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 
-// Soft pastel palette for subjects — cycles through for variety
 const SUBJECT_COLORS = [
   { bg: "bg-primary/15", border: "border-primary/30", text: "text-primary" },
   { bg: "bg-highlight/15", border: "border-highlight/30", text: "text-highlight" },
@@ -28,10 +27,6 @@ function formatMonthYear(dateStr: string) {
   return d.toLocaleDateString("pt-BR", { month: "long", year: "numeric" });
 }
 
-function formatDay(dateStr: string) {
-  return new Date(dateStr + "T00:00:00").getDate();
-}
-
 interface Props {
   plans: DayPlan[];
 }
@@ -39,35 +34,27 @@ interface Props {
 export default function PlanCalendarView({ plans }: Props) {
   const [currentWeekIdx, setCurrentWeekIdx] = useState(0);
 
-  // Build color map for subjects
   const subjectColorMap = new Map<string, (typeof SUBJECT_COLORS)[0]>();
   let colorIdx = 0;
   plans.forEach((day) => {
     day.blocks.forEach((block) => {
-      const key = block.disciplinaId;
-      if (!subjectColorMap.has(key)) {
-        subjectColorMap.set(key, SUBJECT_COLORS[colorIdx % SUBJECT_COLORS.length]);
+      if (!subjectColorMap.has(block.disciplinaId)) {
+        subjectColorMap.set(block.disciplinaId, SUBJECT_COLORS[colorIdx % SUBJECT_COLORS.length]);
         colorIdx++;
       }
     });
   });
 
-  // Group plans by week (Sun-Sat grid)
   const weeks: (DayPlan | null)[][] = [];
   if (plans.length === 0) return null;
 
-  // Find the range
   const firstDate = new Date(plans[0].date + "T00:00:00");
   const lastDate = new Date(plans[plans.length - 1].date + "T00:00:00");
-
-  // Build a lookup
   const planMap = new Map<string, DayPlan>();
   plans.forEach((p) => planMap.set(p.date, p));
 
-  // Start from the Sunday of the first week
   const startSunday = new Date(firstDate);
   startSunday.setDate(startSunday.getDate() - startSunday.getDay());
-
   const endSaturday = new Date(lastDate);
   endSaturday.setDate(endSaturday.getDate() + (6 - endSaturday.getDay()));
 
@@ -77,7 +64,6 @@ export default function PlanCalendarView({ plans }: Props) {
   while (cursor <= endSaturday) {
     const dateStr = cursor.toISOString().split("T")[0];
     currentWeek.push(planMap.get(dateStr) || null);
-
     if (cursor.getDay() === 6) {
       weeks.push(currentWeek);
       currentWeek = [];
@@ -85,24 +71,20 @@ export default function PlanCalendarView({ plans }: Props) {
     cursor.setDate(cursor.getDate() + 1);
   }
   if (currentWeek.length > 0) weeks.push(currentWeek);
+
   const visibleWeeks = weeks.length <= 2 ? weeks : [weeks[currentWeekIdx]];
   const showPagination = weeks.length > 2;
 
-  // Get month label from current visible week
   const currentMonthLabel = (() => {
     const w = weeks[currentWeekIdx] || weeks[0];
     const firstDay = w.find((d) => d !== null);
     if (firstDay) return formatMonthYear(firstDay.date);
-    // fallback: get date from position
     const refDate = new Date(startSunday);
     refDate.setDate(refDate.getDate() + currentWeekIdx * 7);
     return refDate.toLocaleDateString("pt-BR", { month: "long", year: "numeric" });
   })();
 
-  // Mini calendar data for the sidebar
   const allDatesWithPlans = new Set(plans.map((p) => p.date));
-
-  // Current month for mini calendar
   const refDateForMonth = (() => {
     const w = weeks[currentWeekIdx] || weeks[0];
     const d = w.find((p) => p !== null);
@@ -114,62 +96,40 @@ export default function PlanCalendarView({ plans }: Props) {
   const miniCalFirstDay = new Date(miniCalYear, miniCalMonth, 1).getDay();
   const miniCalDaysInMonth = new Date(miniCalYear, miniCalMonth + 1, 0).getDate();
 
-  // Subject legend
   const uniqueSubjects = Array.from(subjectColorMap.entries());
 
   return (
     <div className="flex gap-6">
-      {/* Main calendar grid */}
       <div className="flex-1 min-w-0">
-        {/* Navigation header */}
         <div className="mb-4 flex items-center justify-between">
           <div className="flex items-center gap-3">
             {showPagination && (
-              <Button
-                variant="ghost"
-                size="icon"
-                className="h-8 w-8"
+              <Button variant="ghost" size="icon" className="h-8 w-8"
                 onClick={() => setCurrentWeekIdx((i) => Math.max(0, i - 1))}
-                disabled={currentWeekIdx === 0}
-              >
+                disabled={currentWeekIdx === 0}>
                 <ChevronLeft className="h-4 w-4" />
               </Button>
             )}
-            <h3 className="font-heading text-lg font-bold capitalize text-foreground">
-              {currentMonthLabel}
-            </h3>
+            <h3 className="font-heading text-lg font-bold capitalize text-foreground">{currentMonthLabel}</h3>
             {showPagination && (
-              <Button
-                variant="ghost"
-                size="icon"
-                className="h-8 w-8"
+              <Button variant="ghost" size="icon" className="h-8 w-8"
                 onClick={() => setCurrentWeekIdx((i) => Math.min(weeks.length - 1, i + 1))}
-                disabled={currentWeekIdx === weeks.length - 1}
-              >
+                disabled={currentWeekIdx === weeks.length - 1}>
                 <ChevronRight className="h-4 w-4" />
               </Button>
             )}
           </div>
           {showPagination && (
-            <span className="text-xs text-muted-foreground">
-              Semana {currentWeekIdx + 1} de {weeks.length}
-            </span>
+            <span className="text-xs text-muted-foreground">Semana {currentWeekIdx + 1} de {weeks.length}</span>
           )}
         </div>
 
-        {/* Week day headers */}
         <div className="grid grid-cols-7 gap-px rounded-t-xl bg-border overflow-hidden">
           {WEEKDAY_HEADERS.map((day) => (
-            <div
-              key={day}
-              className="bg-muted/50 px-2 py-2 text-center text-xs font-bold text-muted-foreground"
-            >
-              {day}
-            </div>
+            <div key={day} className="bg-muted/50 px-2 py-2 text-center text-xs font-bold text-muted-foreground">{day}</div>
           ))}
         </div>
 
-        {/* Week rows */}
         <div className="grid grid-cols-7 gap-px bg-border rounded-b-xl overflow-hidden">
           {visibleWeeks.flatMap((week, wi) =>
             week.map((day, di) => {
@@ -179,20 +139,13 @@ export default function PlanCalendarView({ plans }: Props) {
               const hasStudy = day && day.blocks.length > 0;
 
               return (
-                <div
-                  key={`${wi}-${di}`}
-                  className={`min-h-[180px] bg-card p-2 ${
-                    !hasStudy ? "bg-muted/20" : ""
-                  }`}
-                >
+                <div key={`${wi}-${di}`} className={`min-h-[180px] bg-card p-2 ${!hasStudy ? "bg-muted/20" : ""}`}>
                   <div className="mb-1.5 flex items-center justify-between">
-                    <span className={`text-xs font-bold ${hasStudy ? "text-foreground" : "text-muted-foreground/50"}`}>
-                      {dayNum}
-                    </span>
+                    <span className={`text-xs font-bold ${hasStudy ? "text-foreground" : "text-muted-foreground/50"}`}>{dayNum}</span>
                     {day && (
-                      <span className="text-[9px] font-medium text-muted-foreground">
-                        Ciclo {day.cyclePosition}
-                      </span>
+                      <Badge variant="outline" className="text-[9px] px-1.5 py-0 h-4 gap-0.5">
+                        <Target className="h-2.5 w-2.5" /> {day.totalQuestions}
+                      </Badge>
                     )}
                   </div>
                   {day && (
@@ -202,35 +155,27 @@ export default function PlanCalendarView({ plans }: Props) {
                         return (
                           <Popover key={bi}>
                             <PopoverTrigger asChild>
-                              <button
-                                className={`w-full rounded-md border px-2 py-1.5 text-left transition-shadow hover:shadow-md ${colors.bg} ${colors.border}`}
-                              >
-                                <p className={`text-[11px] font-bold leading-tight ${colors.text}`}>
-                                  {block.subject}
-                                </p>
-                                <p className={`text-[10px] ${colors.text} opacity-70`}>
-                                  {block.duration} min
-                                </p>
+                              <button className={`w-full rounded-md border px-2 py-1.5 text-left transition-shadow hover:shadow-md ${colors.bg} ${colors.border}`}>
+                                <p className={`text-[11px] font-bold leading-tight ${colors.text}`}>{block.subject}</p>
+                                <p className={`text-[10px] ${colors.text} opacity-70`}>{block.questions} questões</p>
                               </button>
                             </PopoverTrigger>
                             <PopoverContent className="w-72 p-0" align="start">
                               <div className={`rounded-t-lg border-b px-4 py-3 ${colors.bg}`}>
                                 <div className="flex items-center gap-2">
-                                  <BookOpen className={`h-4 w-4 ${colors.text}`} />
+                                  <Target className={`h-4 w-4 ${colors.text}`} />
                                   <p className={`text-sm font-bold ${colors.text}`}>{block.subject}</p>
                                 </div>
-                                <p className={`mt-0.5 text-xs ${colors.text} opacity-70`}>
-                                  {block.duration} min • {block.type === "estudo" ? "Estudo" : block.type === "questoes" ? "Questões" : "Revisão"}
-                                </p>
+                                <p className={`mt-0.5 text-xs ${colors.text} opacity-70`}>{block.questions} questões para resolver</p>
                               </div>
                               <div className="px-4 py-3">
                                 <p className="mb-2 text-xs font-bold text-foreground">📋 Assuntos do Edital</p>
-                                {block.assuntos && block.assuntos.length > 0 ? (
+                                {block.assuntos.length > 0 ? (
                                   <ul className="space-y-1.5">
-                                    {block.assuntos.map((assunto, ai) => (
+                                    {block.assuntos.map((a, ai) => (
                                       <li key={ai} className="flex items-start gap-2 text-xs text-muted-foreground">
                                         <span className="mt-0.5 h-1.5 w-1.5 shrink-0 rounded-full bg-primary" />
-                                        {assunto}
+                                        {a}
                                       </li>
                                     ))}
                                   </ul>
@@ -251,9 +196,8 @@ export default function PlanCalendarView({ plans }: Props) {
         </div>
       </div>
 
-      {/* Sidebar: mini calendar + legend */}
+      {/* Sidebar */}
       <div className="hidden w-56 shrink-0 space-y-5 lg:block">
-        {/* Mini calendar */}
         <div className="rounded-xl border bg-card p-4">
           <p className="mb-3 text-center text-xs font-bold capitalize text-foreground">
             {new Date(miniCalYear, miniCalMonth).toLocaleDateString("pt-BR", { month: "long", year: "numeric" })}
@@ -262,28 +206,21 @@ export default function PlanCalendarView({ plans }: Props) {
             {["D", "S", "T", "Q", "Q", "S", "S"].map((d, i) => (
               <span key={i} className="text-[10px] font-bold text-muted-foreground">{d}</span>
             ))}
-            {Array.from({ length: miniCalFirstDay }).map((_, i) => (
-              <span key={`e-${i}`} />
-            ))}
+            {Array.from({ length: miniCalFirstDay }).map((_, i) => <span key={`e-${i}`} />)}
             {Array.from({ length: miniCalDaysInMonth }).map((_, i) => {
               const dayDate = `${miniCalYear}-${String(miniCalMonth + 1).padStart(2, "0")}-${String(i + 1).padStart(2, "0")}`;
               const hasPlan = allDatesWithPlans.has(dayDate);
               return (
-                <button
-                  key={i}
+                <button key={i}
                   onClick={() => {
-                    // Find which week this date belongs to
                     const target = new Date(dayDate + "T00:00:00");
                     const diffMs = target.getTime() - startSunday.getTime();
                     const weekNum = Math.floor(diffMs / (7 * 24 * 60 * 60 * 1000));
                     if (weekNum >= 0 && weekNum < weeks.length) setCurrentWeekIdx(weekNum);
                   }}
                   className={`flex h-6 w-6 items-center justify-center rounded-full text-[10px] font-medium transition-colors ${
-                    hasPlan
-                      ? "bg-primary text-primary-foreground"
-                      : "text-muted-foreground hover:bg-muted"
-                  }`}
-                >
+                    hasPlan ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:bg-muted"
+                  }`}>
                   {i + 1}
                 </button>
               );
@@ -291,27 +228,20 @@ export default function PlanCalendarView({ plans }: Props) {
           </div>
         </div>
 
-        {/* Semanas rápidas */}
         <div className="rounded-xl border bg-card p-4">
-          <p className="mb-2 text-xs font-bold text-foreground">SEMANAS ACADÊMICAS</p>
+          <p className="mb-2 text-xs font-bold text-foreground">SEMANAS</p>
           <div className="space-y-1">
             {weeks.slice(0, 8).map((_, i) => (
-              <button
-                key={i}
-                onClick={() => setCurrentWeekIdx(i)}
+              <button key={i} onClick={() => setCurrentWeekIdx(i)}
                 className={`block w-full rounded-lg px-3 py-1.5 text-left text-xs font-medium transition-colors ${
-                  currentWeekIdx === i
-                    ? "bg-primary/10 text-primary"
-                    : "text-muted-foreground hover:bg-muted"
-                }`}
-              >
+                  currentWeekIdx === i ? "bg-primary/10 text-primary" : "text-muted-foreground hover:bg-muted"
+                }`}>
                 Semana {i + 1}
               </button>
             ))}
           </div>
         </div>
 
-        {/* Subject legend */}
         <div className="rounded-xl border bg-card p-4">
           <p className="mb-2 text-xs font-bold text-foreground">MATÉRIAS</p>
           <div className="space-y-1.5">
@@ -321,7 +251,7 @@ export default function PlanCalendarView({ plans }: Props) {
               return (
                 <div key={id} className="flex items-center gap-2">
                   <div className={`h-3 w-3 rounded-sm ${colors.bg} ${colors.border} border`} />
-                  <span className="text-[11px] text-muted-foreground">{block.subject.replace(/^Questões de /, "")}</span>
+                  <span className="text-[11px] text-muted-foreground">{block.subject}</span>
                 </div>
               );
             })}

@@ -5,11 +5,10 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Checkbox } from "@/components/ui/checkbox";
 import { Badge } from "@/components/ui/badge";
-import { ChevronLeft, ChevronRight, Sparkles, Calendar as CalendarIcon } from "lucide-react";
+import { ChevronLeft, ChevronRight, Sparkles, Target } from "lucide-react";
 import { concursos } from "@/data/mockData";
-import { editais, PlanningInput } from "@/data/planningData";
+import { editais, PlanningInput, minutesToQuestions, getIntensityLabel, getProjections } from "@/data/planningData";
 
 const DAYS = [
   { id: "segunda", label: "Seg" },
@@ -30,7 +29,7 @@ export default function PlanningWizard({ onGenerate }: Props) {
   const [concursoId, setConcursoId] = useState("");
   const [studyEveryDay, setStudyEveryDay] = useState(true);
   const [studyDays, setStudyDays] = useState<string[]>([]);
-  const [hoursPerDay, setHoursPerDay] = useState(3);
+  const [minutesPerDay, setMinutesPerDay] = useState(30);
   const [examDate, setExamDate] = useState("");
   const [startDate, setStartDate] = useState(new Date().toISOString().split("T")[0]);
   const [level, setLevel] = useState<"iniciante" | "intermediario" | "avancado">("iniciante");
@@ -50,7 +49,7 @@ export default function PlanningWizard({ onGenerate }: Props) {
   const canProceed = () => {
     if (step === 1) return !!concursoId;
     if (step === 2) return studyEveryDay || studyDays.length > 0;
-    if (step === 3) return hoursPerDay > 0;
+    if (step === 3) return minutesPerDay >= 10;
     return true;
   };
 
@@ -61,7 +60,7 @@ export default function PlanningWizard({ onGenerate }: Props) {
       banca: edital?.banca || "",
       studyEveryDay,
       studyDays,
-      hoursPerDay,
+      minutesPerDay,
       examDate: examDate || null,
       startDate,
       level,
@@ -70,10 +69,16 @@ export default function PlanningWizard({ onGenerate }: Props) {
     });
   };
 
+  // Derived values for step 3
+  const questionsPerDay = minutesToQuestions(minutesPerDay, level);
+  const daysPerWeek = studyEveryDay ? 7 : studyDays.length || 5;
+  const projections = getProjections(questionsPerDay, daysPerWeek);
+  const intensity = getIntensityLabel(minutesPerDay);
+
   const steps = [
     { num: 1, label: "Concurso" },
     { num: 2, label: "Rotina" },
-    { num: 3, label: "Tempo" },
+    { num: 3, label: "Produtividade" },
     { num: 4, label: "Contexto" },
   ];
 
@@ -148,11 +153,11 @@ export default function PlanningWizard({ onGenerate }: Props) {
         {step === 2 && (
           <div className="space-y-6">
             <div>
-              <h3 className="font-heading text-lg font-bold text-foreground">Sua rotina de estudo</h3>
-              <p className="text-sm text-muted-foreground">Informe quais dias da semana você consegue estudar.</p>
+              <h3 className="font-heading text-lg font-bold text-foreground">Sua rotina de questões</h3>
+              <p className="text-sm text-muted-foreground">Informe quais dias da semana você resolve questões.</p>
             </div>
             <div className="space-y-4">
-              <Label>Você estuda todos os dias?</Label>
+              <Label>Você resolve questões todos os dias?</Label>
               <RadioGroup
                 value={studyEveryDay ? "sim" : "nao"}
                 onValueChange={(v) => setStudyEveryDay(v === "sim")}
@@ -170,7 +175,7 @@ export default function PlanningWizard({ onGenerate }: Props) {
             </div>
             {!studyEveryDay && (
               <div className="space-y-3">
-                <Label>Selecione os dias que estuda:</Label>
+                <Label>Selecione os dias:</Label>
                 <div className="flex flex-wrap gap-2">
                   {DAYS.map((day) => (
                     <button
@@ -191,31 +196,75 @@ export default function PlanningWizard({ onGenerate }: Props) {
           </div>
         )}
 
-        {/* Step 3: Tempo */}
+        {/* Step 3: Produtividade (minutos → questões) */}
         {step === 3 && (
           <div className="space-y-6">
             <div>
-              <h3 className="font-heading text-lg font-bold text-foreground">Tempo disponível</h3>
-              <p className="text-sm text-muted-foreground">Quantas horas por dia você tem para estudar?</p>
+              <h3 className="font-heading text-lg font-bold text-foreground">Sua produtividade diária</h3>
+              <p className="text-sm text-muted-foreground">Quantos minutos por dia você pode dedicar a resolver questões?</p>
             </div>
+
+            {/* Minutes slider */}
             <div className="space-y-3">
-              <Label>Horas por dia</Label>
+              <Label>Minutos por dia</Label>
               <div className="flex items-center gap-4">
                 <input
                   type="range"
-                  min={1}
-                  max={12}
-                  step={0.5}
-                  value={hoursPerDay}
-                  onChange={(e) => setHoursPerDay(Number(e.target.value))}
+                  min={10}
+                  max={120}
+                  step={5}
+                  value={minutesPerDay}
+                  onChange={(e) => setMinutesPerDay(Number(e.target.value))}
                   className="w-full accent-primary"
                 />
-                <span className="min-w-[4rem] rounded-lg bg-primary/10 px-3 py-1.5 text-center font-heading text-lg font-bold text-primary">
-                  {hoursPerDay}h
+                <span className="min-w-[5rem] rounded-lg bg-primary/10 px-3 py-1.5 text-center font-heading text-lg font-bold text-primary">
+                  {minutesPerDay}min
                 </span>
               </div>
-              <p className="text-xs text-muted-foreground">{hoursPerDay * 60} minutos por dia de estudo</p>
             </div>
+
+            {/* Intensity badge */}
+            <div className="flex items-center gap-2">
+              <span className="text-lg">{intensity.emoji}</span>
+              <span className={`font-bold ${intensity.color}`}>{intensity.label}</span>
+            </div>
+
+            {/* Questions conversion */}
+            <div className="rounded-xl border-2 border-primary/20 bg-primary/5 p-5">
+              <div className="flex items-center gap-3 mb-3">
+                <Target className="h-5 w-5 text-primary" />
+                <h4 className="font-heading text-base font-bold text-foreground">Conversão automática</h4>
+              </div>
+              <div className="flex items-center gap-4">
+                <div className="text-center">
+                  <p className="font-heading text-3xl font-bold text-primary">{questionsPerDay}</p>
+                  <p className="text-xs text-muted-foreground">questões/dia</p>
+                </div>
+                <div className="h-10 w-px bg-border" />
+                <div className="text-center">
+                  <p className="font-heading text-3xl font-bold text-primary">{questionsPerDay * daysPerWeek}</p>
+                  <p className="text-xs text-muted-foreground">questões/semana</p>
+                </div>
+              </div>
+            </div>
+
+            {/* Projections */}
+            <div className="grid grid-cols-3 gap-3">
+              {[
+                { label: "1 mês", value: projections.month1 },
+                { label: "2 meses", value: projections.month2 },
+                { label: "3 meses", value: projections.month3 },
+              ].map((p) => (
+                <div key={p.label} className="rounded-lg border bg-card p-3 text-center">
+                  <p className="font-heading text-xl font-bold text-foreground">{p.value.toLocaleString()}</p>
+                  <p className="text-xs text-muted-foreground">em {p.label}</p>
+                </div>
+              ))}
+            </div>
+
+            <p className="text-xs text-muted-foreground">
+              * Estimativa baseada no nível <strong>{level}</strong> (~{(1 / (minutesToQuestions(1, level) || 0.5)).toFixed(1)} min/questão)
+            </p>
           </div>
         )}
 
@@ -224,7 +273,7 @@ export default function PlanningWizard({ onGenerate }: Props) {
           <div className="space-y-6">
             <div>
               <h3 className="font-heading text-lg font-bold text-foreground">Contexto e prioridades</h3>
-              <p className="text-sm text-muted-foreground">Informações adicionais para personalizar seu planejamento.</p>
+              <p className="text-sm text-muted-foreground">Informações para distribuir questões de forma inteligente.</p>
             </div>
             <div className="grid gap-4 sm:grid-cols-2">
               <div className="space-y-2">
@@ -255,6 +304,7 @@ export default function PlanningWizard({ onGenerate }: Props) {
               <>
                 <div className="space-y-3">
                   <Label>Matérias com mais dificuldade (opcional)</Label>
+                  <p className="text-xs text-muted-foreground">Receberão mais questões no plano</p>
                   <div className="flex flex-wrap gap-2">
                     {edital.disciplinas.map((d) => (
                       <button
@@ -273,6 +323,7 @@ export default function PlanningWizard({ onGenerate }: Props) {
                 </div>
                 <div className="space-y-3">
                   <Label>Matérias que deseja priorizar (opcional)</Label>
+                  <p className="text-xs text-muted-foreground">Aparecerão com mais frequência</p>
                   <div className="flex flex-wrap gap-2">
                     {edital.disciplinas.map((d) => (
                       <button
@@ -311,7 +362,7 @@ export default function PlanningWizard({ onGenerate }: Props) {
           ) : (
             <Button onClick={handleGenerate} disabled={!concursoId} className="gap-2 bg-highlight text-highlight-foreground hover:bg-highlight/90">
               <Sparkles className="h-4 w-4" />
-              Gerar Planejamento
+              Gerar Plano de Questões
             </Button>
           )}
         </div>
