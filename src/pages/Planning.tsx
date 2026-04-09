@@ -16,9 +16,7 @@ function loadSavedPlan(): { plans: DayPlan[]; input: PlanningInput } | null {
     if (plansRaw && inputRaw) {
       return { plans: JSON.parse(plansRaw), input: JSON.parse(inputRaw) };
     }
-  } catch {
-    // ignore
-  }
+  } catch { /* ignore */ }
   return null;
 }
 
@@ -28,7 +26,6 @@ export default function Planning() {
   const [lastInput, setLastInput] = useState<PlanningInput | null>(null);
   const [isSaved, setIsSaved] = useState(false);
 
-  // Load saved plan on mount
   useEffect(() => {
     const saved = loadSavedPlan();
     if (saved) {
@@ -61,31 +58,21 @@ export default function Planning() {
     }
   };
 
-  const handleEdit = () => {
-    setPlans(null);
-  };
-
+  const handleEdit = () => setPlans(null);
   const allowAccess = true;
 
   return (
     <Layout>
       <div className="mb-6">
-        <h1 className="font-heading text-2xl font-bold text-foreground">Planejamento de Estudos</h1>
+        <h1 className="font-heading text-2xl font-bold text-foreground">🎯 Plano de Questões</h1>
         <p className="text-sm text-muted-foreground">
-          Monte um cronograma personalizado baseado no seu edital e rotina.
+          Monte um plano de resolução de questões personalizado baseado no edital e na sua rotina.
         </p>
       </div>
       {!allowAccess ? (
         <PremiumGate />
       ) : plans && lastInput ? (
-        <PlanResult
-          plans={plans}
-          input={lastInput}
-          onRegenerate={handleRegenerate}
-          onEdit={handleEdit}
-          onSave={handleSave}
-          isSaved={isSaved}
-        />
+        <PlanResult plans={plans} input={lastInput} onRegenerate={handleRegenerate} onEdit={handleEdit} onSave={handleSave} isSaved={isSaved} />
       ) : (
         <PlanningWizard onGenerate={handleGenerate} />
       )}

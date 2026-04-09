@@ -7,7 +7,7 @@ import RevisionTimeline from "./RevisionTimeline";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { CalendarDays, List, Printer, Download, RefreshCw, Settings2, Save, CheckCircle2, Play } from "lucide-react";
+import { CalendarDays, List, Printer, Download, RefreshCw, Settings2, Save, CheckCircle2, Play, Target } from "lucide-react";
 
 interface Props {
   plans: DayPlan[];
@@ -25,16 +25,9 @@ export default function PlanResult({ plans, input, onRegenerate, onEdit, onSave,
   const edital = editais[input.concursoId];
 
   const totalDays = plans.length;
-  const totalHours = plans.reduce((s, p) => s + p.blocks.reduce((bs, b) => bs + b.duration, 0), 0) / 60;
+  const totalQuestions = plans.reduce((s, p) => s + p.totalQuestions, 0);
 
-  const handlePrint = () => {
-    window.print();
-  };
-
-  const handleDownloadPDF = () => {
-    // Using print dialog for PDF generation
-    window.print();
-  };
+  const handlePrint = () => window.print();
 
   return (
     <div>
@@ -43,7 +36,7 @@ export default function PlanResult({ plans, input, onRegenerate, onEdit, onSave,
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div>
             <h3 className="font-heading text-xl font-bold text-foreground">
-              📅 Seu Planejamento de Estudos
+              🎯 Seu Plano de Questões
             </h3>
             <p className="mt-1 text-sm text-muted-foreground">
               {edital?.cargo} • {edital?.banca}
@@ -51,13 +44,15 @@ export default function PlanResult({ plans, input, onRegenerate, onEdit, onSave,
           </div>
           <div className="flex flex-wrap gap-2">
             <Badge className="bg-primary/10 text-primary">{totalDays} dias</Badge>
-            <Badge className="bg-highlight/10 text-highlight">{totalHours.toFixed(0)}h total</Badge>
+            <Badge className="bg-highlight/10 text-highlight">
+              <Target className="mr-1 h-3 w-3" /> {totalQuestions.toLocaleString()} questões
+            </Badge>
             <Badge className="bg-secondary/10 text-secondary">{edital?.disciplinas.length} matérias</Badge>
           </div>
         </div>
         <div className="mt-4 flex flex-wrap gap-2">
           <Button size="sm" onClick={() => navigate("/study-session")} className="gap-1.5 bg-primary text-primary-foreground hover:bg-primary/90">
-            <Play className="h-3.5 w-3.5" /> Iniciar Estudo
+            <Play className="h-3.5 w-3.5" /> Iniciar Questões
           </Button>
           <Button variant="outline" size="sm" onClick={onEdit} className="gap-1.5">
             <Settings2 className="h-3.5 w-3.5" /> Editar
@@ -68,7 +63,7 @@ export default function PlanResult({ plans, input, onRegenerate, onEdit, onSave,
           <Button variant="outline" size="sm" onClick={handlePrint} className="gap-1.5">
             <Printer className="h-3.5 w-3.5" /> Imprimir
           </Button>
-          <Button size="sm" onClick={handleDownloadPDF} className="gap-1.5 bg-highlight text-highlight-foreground hover:bg-highlight/90">
+          <Button size="sm" onClick={handlePrint} className="gap-1.5 bg-highlight text-highlight-foreground hover:bg-highlight/90">
             <Download className="h-3.5 w-3.5" /> Baixar PDF
           </Button>
           <Button
@@ -97,22 +92,15 @@ export default function PlanResult({ plans, input, onRegenerate, onEdit, onSave,
 
       {/* Content */}
       <div ref={printRef} className="print-content">
-        {/* Print header - hidden on screen */}
         <div className="mb-6 hidden print:block">
-          <h1 className="text-center font-heading text-xl font-bold">LegisQuest — Planejamento de Estudos</h1>
+          <h1 className="text-center font-heading text-xl font-bold">LegisQuest — Plano de Questões</h1>
           <p className="text-center text-sm text-muted-foreground">
-            {edital?.cargo} • {edital?.banca} • {totalDays} dias • {totalHours.toFixed(0)}h total
+            {edital?.cargo} • {edital?.banca} • {totalDays} dias • {totalQuestions.toLocaleString()} questões
           </p>
         </div>
-
-        {view === "calendar" ? (
-          <PlanCalendarView plans={plans} />
-        ) : (
-          <PlanListView plans={plans} />
-        )}
+        {view === "calendar" ? <PlanCalendarView plans={plans} /> : <PlanListView plans={plans} />}
       </div>
 
-      {/* Revision timeline */}
       <RevisionTimeline plans={plans} />
     </div>
   );
