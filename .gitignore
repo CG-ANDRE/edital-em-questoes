@@ -22,3 +22,7 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# BMAD outputs (artefatos gerados por agentes — não versionar drafts)
+_bmad-output/
+_bmad/_memory/
