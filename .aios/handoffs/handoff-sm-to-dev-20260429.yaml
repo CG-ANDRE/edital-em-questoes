@@ -1,0 +1,87 @@
+handoff:
+  from_agent: sm
+  to_agent: dev
+  consumed: true
+  story_context:
+    story_id: '1.1'
+    story_path: _bmad-output/implementation-artifacts/1-1-setup-tecnico-inicial.md
+    story_status: ready-for-dev
+    current_task: Implementar Epic 1 completo (8 stories sequenciais)
+    branch: null
+
+  decisions:
+    - "Projeto usa AIOS sobre BMAD — NÃO tocar em _bmad-output/, apenas ler"
+    - "Frontend Lovable já existe: src/pages/, src/components/, src/lib/utils.ts"
+    - "Supabase NÃO inicializado — Story 1.1 requer setup manual pelo usuário (project-ref, keys)"
+    - "GitHub Actions ausente — criar em Story 1.1"
+    - "Stories em _bmad-output/implementation-artifacts/ no formato BMAD: {epic}-{story}-{slug}.md"
+    - "core-config.yaml aponta devStoryLocation para _bmad-output/implementation-artifacts"
+
+  epic_1_stories:
+    - id: '1.1'
+      file: _bmad-output/implementation-artifacts/1-1-setup-tecnico-inicial.md
+      title: Setup Técnico Inicial
+      type: infra
+      note: "Requer ações manuais do usuário: criar projeto Supabase, conectar Vercel, configurar GitHub secrets"
+    - id: '1.2'
+      file: _bmad-output/implementation-artifacts/1-2-schema-inicial-e-rls-policies-base.md
+      title: Schema Inicial e RLS Policies Base
+      type: database
+      depends_on: '1.1'
+    - id: '1.3'
+      file: _bmad-output/implementation-artifacts/1-3-cadastro-de-usuario-com-consentimento-lgpd.md
+      title: Cadastro de Usuário com Consentimento LGPD
+      type: fullstack
+      depends_on: '1.2'
+    - id: '1.4'
+      file: _bmad-output/implementation-artifacts/1-4-login-e-logout.md
+      title: Login e Logout
+      type: frontend
+      depends_on: '1.2'
+    - id: '1.5'
+      file: _bmad-output/implementation-artifacts/1-5-recuperacao-de-senha-por-email.md
+      title: Recuperação de Senha por Email
+      type: frontend
+      depends_on: '1.4'
+    - id: '1.6'
+      file: _bmad-output/implementation-artifacts/1-6-atualizacao-de-perfil.md
+      title: Atualização de Perfil
+      type: fullstack
+      depends_on: '1.3'
+    - id: '1.7'
+      file: _bmad-output/implementation-artifacts/1-7-lgpd-self-service-exportacao-de-dados-dsr.md
+      title: LGPD Self-Service Exportação de Dados (DSR)
+      type: fullstack
+      depends_on: '1.3'
+    - id: '1.8'
+      file: _bmad-output/implementation-artifacts/1-8-lgpd-self-service-exclusao-de-conta.md
+      title: LGPD Self-Service Exclusão de Conta
+      type: fullstack
+      depends_on: '1.3'
+
+  project_state:
+    frontend_exists: true
+    frontend_path: src/
+    pages_present:
+      - Dashboard.tsx
+      - Login.tsx
+      - Practice.tsx
+      - Planning.tsx
+      - StudySession.tsx
+      - QuestionPage.tsx
+      - Performance.tsx
+      - Plans.tsx
+      - Materials.tsx
+      - admin/
+    supabase_initialized: false
+    env_local_exists: false
+    github_actions_exists: false
+    husky_exists: false
+
+  blockers: []
+  next_action: >
+    Implementar Epic 1 story por story (1.1 → 1.8) em sequência.
+    Iniciar por 1.1 lendo o arquivo story completo.
+    Na Story 1.1, pausar e solicitar ao usuário: project-ref Supabase, anon key, service role key, DSN Sentry, PostHog key.
+    Após cada story: commit local + atualizar status no sprint-status.yaml.
+    Ao concluir 1.8: sinalizar para @qa iniciar QA gate do Epic 1.

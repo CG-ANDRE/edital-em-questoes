@@ -23,6 +23,20 @@ dist-ssr
 *.sln
 *.sw?
 
+# Env — NUNCA commitar credenciais
+.env
+.env.local
+.env.*.local
+.env.production
+
+# Supabase runtime
+supabase/.branches/
+supabase/.temp/
+
+# AIOS runtime
+.aios/debug-log.md
+.aios/decision-logs-index.md
+
 # BMAD outputs (artefatos gerados por agentes — não versionar drafts)
 _bmad-output/
 _bmad/_memory/

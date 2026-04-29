@@ -1,0 +1,29 @@
+generated: '2026-04-29'
+project: edital-em-questoes
+framework: aios-over-bmad
+
+current_epic:
+  id: 1
+  title: Foundation & User Onboarding
+  phase: MVP
+  status: backlog
+  monday_board_id: 18410080439
+
+current_story:
+  id: '1.1'
+  file: _bmad-output/implementation-artifacts/1-1-setup-tecnico-inicial.md
+  title: Setup Técnico Inicial
+  status: ready-for-dev
+
+story_location: _bmad-output/implementation-artifacts
+total_epics: 11
+total_stories: 69
+stories_done: 0
+stories_in_progress: 0
+
+sprint_status_file: _bmad-output/implementation-artifacts/sprint-status.yaml
+
+notes: >
+  Projeto usa BMAD v6.3.0 para artefatos de planejamento (PRD, arquitetura, épicos, stories).
+  AIOS instalado como camada de orquestração de agentes. NÃO modificar nada em _bmad-output/.
+  Stories nomeadas no formato BMAD: {epic}-{story}-{slug}.md

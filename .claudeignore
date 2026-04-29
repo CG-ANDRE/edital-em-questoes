@@ -1,0 +1,18 @@
+# Arquivos com credenciais — Claude não deve ler
+.env
+.env.local
+.env.*.local
+.env.production
+
+# Supabase runtime
+supabase/.branches/
+supabase/.temp/
+
+# Dependências
+node_modules/
+
+# Build
+dist/
+
+# AIOS runtime logs
+.aios/debug-log.md

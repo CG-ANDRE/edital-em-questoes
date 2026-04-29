@@ -180,7 +180,7 @@ export function generateStudyPlan(input: PlanningInput): DayPlan[] {
   const dailyQuestions = minutesToQuestions(input.minutesPerDay, input.level);
 
   // Build weighted discipline list
-  let disciplinas = [...edital.disciplinas].map((d) => {
+  const disciplinas = [...edital.disciplinas].map((d) => {
     let weight = d.peso;
     if (input.prioritySubjects.includes(d.id)) weight += 2;
     if (input.difficultSubjects.includes(d.id)) weight += 1.5;

@@ -1,0 +1,119 @@
+markdownExploder: true
+project:
+  type: brownfield
+  installedAt: '2026-04-29T00:00:00.000Z'
+  version: 2.1.0
+  name: edital-em-questoes
+  description: App de questões para concursos públicos (React 18 + Vite + Supabase)
+
+user_profile: intermediate
+ide:
+  selected:
+    - claude-code
+  configs:
+    claude-code: true
+    vscode: false
+    cursor: false
+
+# ─────────────────────────────────────────────
+# BMAD ARTIFACTS — leitura apenas, nunca alterar
+# ─────────────────────────────────────────────
+prd:
+  prdFile: _bmad-output/planning-artifacts/prd.md
+  prdVersion: v4
+  prdSharded: false
+
+architecture:
+  architectureFile: _bmad-output/planning-artifacts/architecture.md
+  architectureVersion: v4
+  architectureSharded: false
+
+# ─────────────────────────────────────────────
+# STORIES — aponta para artefatos BMAD existentes
+# ─────────────────────────────────────────────
+devStoryLocation: _bmad-output/implementation-artifacts
+
+# Arquivos de arquitetura sempre carregados pelo @dev
+devLoadAlwaysFiles:
+  - _bmad-output/planning-artifacts/architecture.md
+
+devLoadAlwaysFilesFallback: []
+
+# ─────────────────────────────────────────────
+# QA / LOGS / RUNTIME
+# ─────────────────────────────────────────────
+qa:
+  qaLocation: docs/qa
+
+devDebugLog: .aios/debug-log.md
+
+decisionLogging:
+  enabled: true
+  async: true
+  location: .aios/
+  indexFile: decision-logs-index.md
+  format: adr
+  performance:
+    maxOverhead: 50
+
+# ─────────────────────────────────────────────
+# CAMINHOS DO FRAMEWORK (via symlink .aios-core)
+# ─────────────────────────────────────────────
+toolsLocation: .aios-core/tools
+scriptsLocation: .aios-core/scripts
+dataLocation: .aios-core/data
+elicitationLocation: .aios-core/elicitation
+squadsLocation: squads
+mindsLocation: outputs/minds
+
+# ─────────────────────────────────────────────
+# PROJECT STATUS
+# ─────────────────────────────────────────────
+projectStatus:
+  enabled: true
+  autoLoadOnAgentActivation: true
+  showInGreeting: true
+  cacheTimeSeconds: 60
+  components:
+    gitBranch: true
+    gitStatus: true
+    recentWork: true
+    currentEpic: true
+    currentStory: true
+  statusFile: .aios/project-status.yaml
+  maxModifiedFiles: 5
+  maxRecentCommits: 2
+
+# ─────────────────────────────────────────────
+# BOUNDARY — protege BMAD e AIOS core
+# ─────────────────────────────────────────────
+boundary:
+  frameworkProtection: true
+  protected:
+    - .aios-core/core/**
+    - .aios-core/development/tasks/**
+    - .aios-core/development/templates/**
+    - .aios-core/development/checklists/**
+    - .aios-core/development/workflows/**
+    - .aios-core/infrastructure/**
+    - .aios-core/constitution.md
+    - _bmad-output/**
+  exceptions:
+    - .aios-core/data/**
+    - .aios-core/development/agents/*/MEMORY.md
+
+mcp:
+  enabled: false
+
+git:
+  showConfigWarning: true
+  cacheTimeSeconds: 300
+
+agentIdentity:
+  greeting:
+    contextDetection: true
+    sessionDetection: hybrid
+    workflowDetection: hardcoded
+    performance:
+      gitCheckCache: true
+      gitCheckTTL: 300
