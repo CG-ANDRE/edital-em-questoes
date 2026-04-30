@@ -1,14 +1,14 @@
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import type { Question } from "@/features/questions/types";
+import type { PublicQuestion } from "@/features/questions/types";
 
-const dificuldadeLabel: Record<Question["dificuldade"], string> = {
+const dificuldadeLabel: Record<PublicQuestion["dificuldade"], string> = {
   facil: "Fácil",
   medio: "Médio",
   dificil: "Difícil",
 };
 
-export function QuestionCard({ question }: { question: Question }) {
+export function QuestionCard({ question }: { question: PublicQuestion }) {
   return (
     <Card>
       <CardHeader>

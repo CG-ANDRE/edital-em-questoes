@@ -1,14 +1,19 @@
 import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { Skeleton } from "@/components/ui/skeleton";
 import { CheckCircle2, XCircle, Flag } from "lucide-react";
-import { parseAlternativas, correctAnswerOf } from "@/features/questions/api";
-import type { AnswerLabel, Question } from "@/features/questions/types";
-import type { UserAnswer } from "@/features/questions/types";
+import { parseAlternativas } from "@/features/questions/api";
+import { useQuestionFeedback } from "@/features/questions/hooks/useNextQuestion";
+import type {
+  AnswerLabel,
+  PublicQuestion,
+  UserAnswer,
+} from "@/features/questions/types";
 import { ReportQuestionDialog } from "@/features/questions/components/ReportQuestionDialog";
 
 type Props = {
-  question: Question;
+  question: PublicQuestion;
   answer: UserAnswer;
   onNext: () => void;
 };
@@ -16,9 +21,23 @@ type Props = {
 export function AnswerFeedback({ question, answer, onNext }: Props) {
   const [reportOpen, setReportOpen] = useState(false);
   const alternativas = parseAlternativas(question);
-  const correct = correctAnswerOf(question);
   const selected = answer.selected_answer as AnswerLabel;
   const isCorrect = answer.is_correct;
+
+  const { data: feedback, isLoading: feedbackLoading } = useQuestionFeedback(
+    question.id
+  );
+
+  if (feedbackLoading || !feedback) {
+    return (
+      <div className="space-y-4">
+        <Skeleton className="h-32 w-full" />
+        <Skeleton className="h-24 w-full" />
+      </div>
+    );
+  }
+
+  const correct = feedback.correctAnswer;
 
   return (
     <div className="space-y-4">
@@ -84,7 +103,7 @@ export function AnswerFeedback({ question, answer, onNext }: Props) {
         </CardHeader>
         <CardContent>
           <p className="whitespace-pre-wrap text-sm leading-relaxed">
-            {question.justificativa}
+            {feedback.justificativa}
           </p>
         </CardContent>
       </Card>

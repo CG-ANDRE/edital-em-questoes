@@ -1,0 +1,69 @@
+handoff:
+  from_agent: dev
+  to_agent: qa
+  consumed: true
+  story_context:
+    story_id: epic-3
+    story_path: _bmad-output/implementation-artifacts/
+    story_status: review
+    current_task: "QA Gate do Epic 3 — Question Bank & Answer Flow"
+    branch: main
+
+  decisions:
+    - "Epic 3 entregue: 6/6 stories implementadas"
+    - "1120 questões reais no banco (TJSC 2026, 530 Técnico + 590 Analista)"
+    - "Story 3.2 implementada enxuta (só question_editais, sem tags livres)"
+    - "Stories 3.3 e 3.4 implementadas combinadas (responder + ver gabarito)"
+    - "Story 3.6 entregue automaticamente via trigger da Story 3.1 + UI admin minimal"
+    - "90/90 testes passando, lint 0 errors, typecheck OK"
+
+  stories_delivered:
+    - id: '3.1'
+      title: CRUD Questões
+      key_features:
+        - "Tabela questions + question_revisions (FR21 append-only)"
+        - "Triggers: search_vector tsvector, audit_questions_revisions"
+        - "RLS: curator_full + public_published, sem DELETE"
+        - "1120 questões importadas via parser TS"
+    - id: '3.2'
+      title: question_editais (enxuta)
+      key_features:
+        - "Tabela question_editais + RLS user_editais ↔ question_editais"
+        - "1120 vínculos questões ↔ TJSC-2026"
+        - "Tags livres deferidas (over-engineering pré-cresimento)"
+    - id: '3.3'
+      title: Responder questão
+      key_features:
+        - "Tabela user_answers (imutável) + RLS"
+        - "fetchNextQuestion: filtra por edital ativo + exclui já respondidas"
+        - "is_correct calculado server-side (busca correct_answer)"
+        - "PostHog event question:answered + timer client-side"
+    - id: '3.4'
+      title: Gabarito + justificativa
+      key_features:
+        - "AnswerFeedback: highlights verde/vermelho + comentário"
+        - "Combinada com 3.3 no mesmo fluxo"
+    - id: '3.5'
+      title: Reportar questão
+      key_features:
+        - "question_reports + 2 enums + 5 índices"
+        - "Trigger rate limit: 5 reports/dia/user (fuso SP)"
+        - "ReportQuestionDialog em AnswerFeedback"
+    - id: '3.6'
+      title: Histórico revisões
+      key_features:
+        - "question_revisions já entregue via trigger da 3.1"
+        - "Componente RevisionsHistory em AdminQuestionEditPage"
+
+  blockers: []
+
+  next_action: >
+    Executar qa-gate sobre Epic 3 (7 quality checks).
+    Foco: validar (1) RLS de user_answers (resposta imutável + auth.uid()),
+    (2) RLS de questions com JOIN user_editais ↔ question_editais (filtro por edital ativo),
+    (3) trigger de rate limit em question_reports,
+    (4) imutabilidade de question_revisions (sem UPDATE/DELETE),
+    (5) is_correct server-side (impede client manipular).
+
+    Atenção a possíveis concerns: similar ao Epic 2 (search_path, anon role,
+    detecção de erros). Aplicar lições aprendidas.

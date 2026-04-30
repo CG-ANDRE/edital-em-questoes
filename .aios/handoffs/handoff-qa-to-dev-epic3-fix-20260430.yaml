@@ -1,0 +1,46 @@
+handoff:
+  from_agent: qa
+  to_agent: dev
+  consumed: true
+  story_context:
+    story_id: epic-3-fix
+    story_path: docs/qa/QA_FIX_REQUEST.md
+    story_status: review
+    current_task: "Aplicar fixes H1, M1, M2 do gate Epic 3"
+    branch: main
+
+  decisions:
+    - "QA Gate Epic 3: PASS WITH CONCERNS (1 HIGH + 2 MEDIUM + 1 LOW)"
+    - "User decidiu corrigir antes de fechar"
+    - "L1 (visibility.userIds) fica como decisão MVP, sem fix"
+
+  fixes_to_apply:
+    - id: H1
+      title: "Trigger server-side de is_correct"
+      type: migration + refactor
+      effort_minutes: 30
+      criticality: "Compromete integridade Epic 4 e Epic 5 se não corrigido"
+    - id: M1
+      title: "Remover correct_answer do payload público + fetchQuestionFeedback"
+      type: refactor
+      effort_minutes: 15
+      bundled_with: H1
+    - id: M2
+      title: "Policy filtra user_editais.is_active = true"
+      type: migration
+      effort_minutes: 5
+
+  validation_after_fixes:
+    - "bun run lint && bun run typecheck && bun run test"
+    - "supabase db push --linked"
+    - "Smoke test: DevTools Network confirma que correct_answer não vaza"
+    - "Smoke test: tentar trapacear is_correct → trigger sobrescreve"
+    - "Ping @qa para re-review"
+
+  blockers: []
+
+  next_action: >
+    Aplicar fixes do docs/qa/QA_FIX_REQUEST.md.
+    H1 e M1 são acoplados (mesmo trigger + refactor).
+    Após validação verde, sinalizar @qa.
+    Commit: "fix(qa): aplicar concerns H1/M1/M2 do gate Epic 3".

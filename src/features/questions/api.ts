@@ -4,21 +4,28 @@ import type { CreateQuestionReportInput } from "@/lib/schemas/question-report.sc
 import type {
   AnswerLabel,
   AnswerQuestionInput,
+  PublicQuestion,
   Question,
   QuestionAlternativa,
+  QuestionFeedback,
   UserAnswer,
 } from "./types";
 
 export type QuestionReport = Tables<"question_reports">;
 
+// Campos seguros para retornar ao usuário ANTES da resposta.
+// Exclui correct_answer e justificativa (anti-trapaça).
+const PUBLIC_QUESTION_FIELDS =
+  "id, enunciado, alternativas, materia, banca, cargo_alvo, dificuldade, status, source_type, image_url, search_vector, created_by, updated_by, created_at, updated_at";
+
 /**
  * Busca a próxima questão para o usuário responder no edital ativo.
- * Estratégia MVP: questões publicadas que o usuário ainda não respondeu, ordem aleatória.
+ * IMPORTANTE: NÃO retorna correct_answer nem justificativa (vazariam o gabarito).
  */
 export async function fetchNextQuestion(
   editalId: string,
   userId: string
-): Promise<Question | null> {
+): Promise<PublicQuestion | null> {
   // Busca IDs já respondidos pelo usuário
   const { data: answered, error: aErr } = await supabase
     .from("user_answers")
@@ -33,7 +40,7 @@ export async function fetchNextQuestion(
   // Busca questões publicadas vinculadas ao edital, excluindo as já respondidas
   let query = supabase
     .from("questions")
-    .select("*, question_editais!inner(edital_id)")
+    .select(`${PUBLIC_QUESTION_FIELDS}, question_editais!inner(edital_id)`)
     .eq("status", "published")
     .eq("question_editais.edital_id", editalId)
     .limit(50);
@@ -48,29 +55,21 @@ export async function fetchNextQuestion(
 
   // Sorteia uma das 50 candidatas para randomização
   const random = data[Math.floor(Math.random() * data.length)];
-  return random as Question;
+  return random as unknown as PublicQuestion;
 }
 
 export async function answerQuestion(
   input: AnswerQuestionInput,
   userId: string
 ): Promise<UserAnswer> {
-  // Busca correct_answer da questão para computar is_correct
-  const { data: q, error: qErr } = await supabase
-    .from("questions")
-    .select("correct_answer")
-    .eq("id", input.questionId)
-    .single();
-  if (qErr) throw qErr;
-
-  const isCorrect = q.correct_answer === input.selectedAnswer;
-
+  // is_correct é sobrescrito pelo trigger BEFORE INSERT enforce_user_answer_correctness().
+  // O valor enviado aqui é ignorado pelo banco — defesa server-side anti-trapaça.
   const payload: TablesInsert<"user_answers"> = {
     user_id: userId,
     question_id: input.questionId,
     edital_id: input.editalId,
     selected_answer: input.selectedAnswer,
-    is_correct: isCorrect,
+    is_correct: false,
     time_spent_ms: input.timeSpentMs,
   };
 
@@ -84,16 +83,33 @@ export async function answerQuestion(
 }
 
 /**
+ * Busca correct_answer + justificativa apenas APÓS o usuário ter respondido.
+ * Usado pelo AnswerFeedback para exibir gabarito.
+ */
+export async function fetchQuestionFeedback(
+  questionId: string
+): Promise<QuestionFeedback> {
+  const { data, error } = await supabase
+    .from("questions")
+    .select("correct_answer, justificativa")
+    .eq("id", questionId)
+    .single();
+  if (error) throw error;
+  return {
+    correctAnswer: data.correct_answer as AnswerLabel,
+    justificativa: data.justificativa,
+  };
+}
+
+/**
  * Helper: extrai array tipado de alternativas do jsonb.
  */
-export function parseAlternativas(q: Question): QuestionAlternativa[] {
+export function parseAlternativas(
+  q: PublicQuestion | Question
+): QuestionAlternativa[] {
   const alts = q.alternativas as unknown;
   if (!Array.isArray(alts)) return [];
   return alts as QuestionAlternativa[];
-}
-
-export function correctAnswerOf(q: Question): AnswerLabel {
-  return q.correct_answer as AnswerLabel;
 }
 
 // Story 3.5 — Reportar questão

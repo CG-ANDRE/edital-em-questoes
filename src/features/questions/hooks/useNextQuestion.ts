@@ -1,9 +1,12 @@
 import { useQuery } from "@tanstack/react-query";
 import { useSession } from "@/features/auth/hooks/useSession";
-import { fetchNextQuestion } from "@/features/questions/api";
+import { fetchNextQuestion, fetchQuestionFeedback } from "@/features/questions/api";
 
 export const nextQuestionKey = (editalId: string, userId: string) =>
   ["questions", "next", editalId, userId] as const;
+
+export const questionFeedbackKey = (questionId: string) =>
+  ["questions", "feedback", questionId] as const;
 
 export function useNextQuestion(editalId: string | undefined) {
   const { session } = useSession();
@@ -18,5 +21,19 @@ export function useNextQuestion(editalId: string | undefined) {
     enabled: !!editalId && !!userId,
     staleTime: 0,
     refetchOnWindowFocus: false,
+  });
+}
+
+export function useQuestionFeedback(questionId: string | undefined) {
+  return useQuery({
+    queryKey: questionId
+      ? questionFeedbackKey(questionId)
+      : ["questions", "feedback", "none"],
+    queryFn: () => {
+      if (!questionId) throw new Error("Falta questionId");
+      return fetchQuestionFeedback(questionId);
+    },
+    enabled: !!questionId,
+    staleTime: Infinity, // gabarito é estável; uma vez baixado, fica em cache
   });
 }

@@ -7,12 +7,12 @@ import { useSession } from "@/features/auth/hooks/useSession";
 import { answerQuestion } from "@/features/questions/api";
 import type {
   AnswerQuestionInput,
-  Question,
+  PublicQuestion,
   UserAnswer,
 } from "@/features/questions/types";
 
 type Args = {
-  question: Question;
+  question: PublicQuestion;
 };
 
 export function useAnswerQuestion({ question }: Args) {
