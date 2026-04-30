@@ -1,0 +1,35 @@
+handoff:
+  from_agent: dev
+  to_agent: devops
+  consumed: true
+  story_context:
+    story_id: epic-1-2-3-push
+    story_path: docs/qa/gates/
+    story_status: done
+    current_task: "Push Epic 1, 2 e 3 + relatório para origin/main"
+    branch: main
+
+  decisions:
+    - "Epics 1, 2 e 3 todos com gate PASS limpo (após 2ª iteração QA cada)"
+    - "23 commits locais aguardando push"
+    - "Vercel auto-deploy em main já configurado (Story 1.1)"
+    - "Edge Functions já deployadas separadamente em produção (não dependem do push)"
+    - "Banco Supabase já populado: 1120 questões, 4+ migrations aplicadas"
+
+  pre_push_checks_passed:
+    - "Lint 0 errors"
+    - "Typecheck OK"
+    - "90/90 testes passando"
+    - "Husky pre-commit ativo (rodou em todos os commits)"
+    - "QA gates PASS para Epic 1, 2 e 3"
+
+  commits_to_push: 23
+
+  blockers: []
+
+  next_action: >
+    1. *pre-push para validar quality gates uma última vez
+    2. *push para enviar para origin/main (CG-ANDRE/edital-em-questoes)
+    3. Confirmar que Vercel disparou auto-deploy
+    4. Confirmar que GitHub Actions ci.yml passou verde
+    5. Reportar URL de produção do Vercel para o user testar

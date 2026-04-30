@@ -59,7 +59,10 @@ describe("LoginForm", () => {
     fireEvent.submit(screen.getByRole("button", { name: /entrar/i }).closest("form")!);
 
     await waitFor(() => {
-      expect(signInMock).toHaveBeenCalledWith({ email: "user@test.com", password: "Senha123" });
+      expect(signInMock).toHaveBeenCalledWith(
+        { email: "user@test.com", password: "Senha123" },
+        expect.anything()
+      );
       expect(navigateMock).toHaveBeenCalledWith("/dashboard", { replace: true });
     });
   });
