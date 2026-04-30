@@ -7,6 +7,7 @@ import LoginPage from "./pages/public/LoginPage";
 import ForgotPasswordPage from "./pages/public/ForgotPasswordPage";
 import ResetPasswordPage from "./pages/public/ResetPasswordPage";
 import SettingsPage from "./pages/app/SettingsPage";
+import PrivacyPage from "./pages/app/PrivacyPage";
 import { RequireAuth } from "./components/RequireAuth";
 import Dashboard from "./pages/Dashboard";
 import Practice from "./pages/Practice";
@@ -58,6 +59,14 @@ const App = () => (
             element={
               <RequireAuth>
                 <SettingsPage />
+              </RequireAuth>
+            }
+          />
+          <Route
+            path="/settings/privacy"
+            element={
+              <RequireAuth>
+                <PrivacyPage />
               </RequireAuth>
             }
           />
