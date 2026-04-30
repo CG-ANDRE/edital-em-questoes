@@ -11,8 +11,11 @@ import ResetPasswordPage from "./pages/public/ResetPasswordPage";
 import SettingsPage from "./pages/app/SettingsPage";
 import PrivacyPage from "./pages/app/PrivacyPage";
 import { RequireAuth } from "./components/RequireAuth";
+import { RequireRole } from "./components/RequireRole";
 
 const EditaisPage = lazy(() => import("./pages/app/EditaisPage"));
+const AdminEditaisPage = lazy(() => import("./pages/admin/AdminEditaisPage"));
+const AdminEditalEditPage = lazy(() => import("./pages/admin/AdminEditalEditPage"));
 import Dashboard from "./pages/Dashboard";
 import Practice from "./pages/Practice";
 import QuestionPage from "./pages/QuestionPage";
@@ -99,6 +102,37 @@ const App = () => (
           <Route path="/plans" element={<Plans />} />
           <Route path="/planning" element={<Planning />} />
           <Route path="/study-session" element={<StudySession />} />
+          {/* Admin Editais (Story 2.3 — RequireRole founder) */}
+          <Route
+            path="/admin/editais"
+            element={
+              <RequireRole role="founder">
+                <Suspense fallback={<Skeleton className="h-96 w-full m-6" />}>
+                  <AdminEditaisPage />
+                </Suspense>
+              </RequireRole>
+            }
+          />
+          <Route
+            path="/admin/editais/novo"
+            element={
+              <RequireRole role="founder">
+                <Suspense fallback={<Skeleton className="h-96 w-full m-6" />}>
+                  <AdminEditalEditPage />
+                </Suspense>
+              </RequireRole>
+            }
+          />
+          <Route
+            path="/admin/editais/:id/editar"
+            element={
+              <RequireRole role="founder">
+                <Suspense fallback={<Skeleton className="h-96 w-full m-6" />}>
+                  <AdminEditalEditPage />
+                </Suspense>
+              </RequireRole>
+            }
+          />
           {/* Admin routes */}
           <Route path="/admin" element={<AdminDashboard />} />
           <Route path="/admin/students" element={<AdminStudents />} />

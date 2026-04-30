@@ -51,3 +51,38 @@ export const selectEditalDatesSchema = z
   });
 
 export type SelectEditalDatesInput = z.infer<typeof selectEditalDatesSchema>;
+
+const optionalDate = z
+  .string()
+  .optional()
+  .nullable()
+  .transform((v) => (v === "" ? null : v ?? null));
+
+export const editalCreateSchema = z
+  .object({
+    titulo: z.string().trim().min(5, "Mínimo 5 caracteres").max(200),
+    slug: z.string().regex(/^[a-z0-9-]{3,100}$/, "Slug inválido (use a-z, 0-9, hífen, 3-100 chars)"),
+    banca: z.string().min(2, "Informe a banca").max(80),
+    cargo: z.string().trim().min(2, "Informe o cargo").max(120),
+    orgao: z.string().trim().min(2, "Informe o órgão").max(120),
+    descricao: optionalDate,
+    data_prova: optionalDate,
+    data_inscricao_inicio: optionalDate,
+    data_inscricao_fim: optionalDate,
+    status: z.enum(["draft", "scheduled", "published", "archived"]),
+  })
+  .superRefine((data, ctx) => {
+    if (
+      data.data_inscricao_inicio &&
+      data.data_inscricao_fim &&
+      data.data_inscricao_fim < data.data_inscricao_inicio
+    ) {
+      ctx.addIssue({
+        code: "custom",
+        path: ["data_inscricao_fim"],
+        message: "Fim das inscrições não pode ser antes do início",
+      });
+    }
+  });
+
+export type EditalCreateInputForm = z.infer<typeof editalCreateSchema>;

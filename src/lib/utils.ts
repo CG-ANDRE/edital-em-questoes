@@ -17,3 +17,13 @@ export function formatDateBR(iso?: string | null): string | null {
   if (!year || !month || !day) return null;
   return dateFormatterPtBR.format(new Date(year, month - 1, day));
 }
+
+export function slugify(input: string): string {
+  return input
+    .normalize("NFD")
+    .replace(/[̀-ͯ]/g, "")
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/-+/g, "-")
+    .replace(/^-|-$/g, "");
+}
