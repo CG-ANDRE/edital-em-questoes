@@ -1,29 +1,34 @@
-generated: '2026-04-29'
+generated: '2026-04-30'
 project: edital-em-questoes
 framework: aios-over-bmad
+production_url: https://edital-em-questoes.vercel.app
 
 current_epic:
-  id: 1
-  title: Foundation & User Onboarding
+  id: 4
+  title: Adaptive Study Planning
   phase: MVP
-  status: backlog
+  status: ready-for-dev
   monday_board_id: 18410080439
 
 current_story:
-  id: '1.1'
-  file: _bmad-output/implementation-artifacts/1-1-setup-tecnico-inicial.md
-  title: Setup Técnico Inicial
+  id: '4.1'
+  file: _bmad-output/implementation-artifacts/4-1-adr-adaptive-schedule-algorithm-design.md
+  title: ADR Adaptive Schedule Algorithm Design
   status: ready-for-dev
 
-story_location: _bmad-output/implementation-artifacts
+epics_done: [1, 2, 3]
 total_epics: 11
+stories_done: 18
 total_stories: 69
-stories_done: 0
-stories_in_progress: 0
+tests_passing: 90
+questoes_no_banco: 1120
 
-sprint_status_file: _bmad-output/implementation-artifacts/sprint-status.yaml
+last_session: docs/sessions/2026-04/SESSION-2026-04-30.md
+last_qa_gate: docs/qa/gates/epic-3-qa-gate.md (PASS)
+last_commit: 2bb066f
 
 notes: >
-  Projeto usa BMAD v6.3.0 para artefatos de planejamento (PRD, arquitetura, épicos, stories).
-  AIOS instalado como camada de orquestração de agentes. NÃO modificar nada em _bmad-output/.
-  Stories nomeadas no formato BMAD: {epic}-{story}-{slug}.md
+  Epics 1, 2 e 3 entregues e em produção. App live em
+  https://edital-em-questoes.vercel.app com 1120 questões TJSC 2026.
+  Próximo: Epic 4 começa pela Story 4.1 (ADR de algoritmo).
+  Considerar acionar @architect antes de @dev para esta story.
