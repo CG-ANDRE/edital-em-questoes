@@ -1,0 +1,58 @@
+handoff:
+  from_agent: dev
+  to_agent: qa
+  consumed: true
+  story_context:
+    story_id: epic-2
+    story_path: _bmad-output/implementation-artifacts/
+    story_status: review
+    current_task: "QA Gate do Epic 2 — Edital Discovery & Selection"
+    branch: main
+
+  decisions:
+    - "Epic 2 entregue: 4/5 stories implementadas + 1 deferida com decisão documentada"
+    - "Story 2.5 (Multi-edital) DEFERIDA até Epic 7 (depende de subscriptions)"
+    - "80/80 testes passando, lint 0 errors, typecheck OK"
+    - "3 migrations aplicadas: editais_table, editais_rls_policies, create_user_editais"
+    - "Story 2.3: pg_cron + react-markdown + TanStack Table v8 deferidos como tech debt"
+    - "Story 2.4: reusou modelo public/beta/allowlist da 2.1 (mais simples que plan-based pré-Epic 7)"
+
+  stories_delivered:
+    - id: '2.1'
+      title: Browse Catálogo de Editais
+      key_features:
+        - "Tabela editais + tsvector PT-BR + 5 índices"
+        - "RLS: 4 policies (public/beta/allowlist/admin_full)"
+        - "Página /editais com Suspense + lazy + RequireAuth"
+        - "FilterBar com URL como SoT + debounce 300ms"
+    - id: '2.2'
+      title: Selecionar Edital e Registrar Datas
+      key_features:
+        - "Tabela user_editais + UNIQUE + CHECK + trigger single_active"
+        - "SelectEditalDialog com warning de troca"
+        - "ActiveEditalBadge com dias até prova"
+    - id: '2.3'
+      title: Founder admin (CRUD editais)
+      key_features:
+        - "RequireRole HOC checa app_metadata.role"
+        - "Painel /admin/editais com Tabs + busca + actions"
+        - "Form com slug auto-gen via slugify"
+    - id: '2.4'
+      title: Founder segmenta visibilidade
+      key_features:
+        - "VisibilityEditor com 3 opções (public/beta/allowlist)"
+        - "Integrado em EditalForm como seção dedicada"
+
+  story_deferred:
+    - id: '2.5'
+      title: Multi-edital Switch [Growth]
+      reason: "Depende de subscriptions table do Epic 7"
+      doc: docs/decisions/STORY-2.5-DEFERRED.md
+
+  blockers: []
+
+  next_action: >
+    Executar qa-gate sobre Epic 2 (mesmos 7 quality checks).
+    Foco: validar segurança das RLS policies (especialmente allowlist com jsonb_array_elements_text),
+    revisar uso correto de path aliases, e checar que o RequireRole bloqueia adequadamente.
+    Pre-existing tech debt: pg_cron, markdown preview, TanStack Table v8 (todos para Epic 3+).

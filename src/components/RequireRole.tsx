@@ -1,9 +1,10 @@
 import { Navigate } from "react-router-dom";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useSession } from "@/features/auth/hooks/useSession";
+import { getAppMetadata, type AppRole } from "@/features/auth/types";
 
 type Props = {
-  role: "founder" | "curator" | "operations";
+  role: AppRole;
   children: React.ReactNode;
 };
 
@@ -22,8 +23,7 @@ export function RequireRole({ role, children }: Props) {
     return <Navigate to="/login" replace />;
   }
 
-  const userRole =
-    (session?.user.app_metadata as { role?: string } | null)?.role ?? null;
+  const userRole = getAppMetadata(session).role ?? null;
 
   if (userRole !== role) {
     return <Navigate to="/dashboard" replace />;

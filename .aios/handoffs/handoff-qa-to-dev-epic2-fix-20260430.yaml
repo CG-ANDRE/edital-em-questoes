@@ -1,0 +1,41 @@
+handoff:
+  from_agent: qa
+  to_agent: dev
+  consumed: true
+  story_context:
+    story_id: epic-2-fix
+    story_path: docs/qa/QA_FIX_REQUEST.md
+    story_status: review
+    current_task: "Aplicar fixes M1, M2, L1 do gate Epic 2"
+    branch: main
+
+  decisions:
+    - "QA Gate Epic 2: PASS WITH CONCERNS (3 MEDIUM + 1 LOW)"
+    - "User decidiu corrigir antes de atualizar Monday"
+    - "M3 (curator policy) fica como follow-up para Epic 8 — não corrigir agora"
+
+  fixes_to_apply:
+    - id: M1
+      title: "Fechar catálogo para authenticated only"
+      type: migration
+      effort_minutes: 10
+    - id: M2
+      title: "set search_path = public nas funções"
+      type: migration
+      effort_minutes: 15
+    - id: L1
+      title: "Tipo AppMetadata explícito + helper getAppMetadata"
+      type: refactor
+      effort_minutes: 15
+
+  validation_after_fixes:
+    - "bun run lint && bun run typecheck && bun run test"
+    - "supabase db push --linked"
+    - "Ping @qa para re-review"
+
+  blockers: []
+
+  next_action: >
+    Aplicar os 3 fixes propostos em docs/qa/QA_FIX_REQUEST.md.
+    Após validação verde + push das migrations, sinalizar @qa.
+    Commit: "fix(qa): aplicar concerns M1/M2/L1 do gate Epic 2".
