@@ -1,7 +1,9 @@
 import { supabase } from "@/lib/supabase";
 import { posthog } from "@/lib/posthog";
 import * as Sentry from "@sentry/react";
+import type { Session } from "@supabase/supabase-js";
 import type { SignupInput } from "@/lib/schemas/user.schema";
+export type SignInInput = { email: string; password: string };
 import type { SignupResult } from "./types";
 
 export async function signUp(input: SignupInput): Promise<SignupResult> {
@@ -33,4 +35,36 @@ export async function signUp(input: SignupInput): Promise<SignupResult> {
     userId: data.user.id,
     requiresEmailConfirmation: !data.session,
   };
+}
+
+export async function signIn(input: SignInInput): Promise<Session> {
+  const { data: rl, error: rlErr } = await supabase.functions.invoke<{
+    allowed: boolean;
+    retryAfterSeconds: number;
+  }>("check-auth-rate-limit", { body: { email: input.email } });
+
+  if (rlErr) throw rlErr;
+  if (rl && !rl.allowed) {
+    const err = new Error("RATE_LIMITED") as Error & { retryAfterSeconds?: number };
+    err.retryAfterSeconds = rl.retryAfterSeconds;
+    throw err;
+  }
+
+  const { data, error } = await supabase.auth.signInWithPassword(input);
+
+  if (error || !data.session) {
+    await supabase.functions
+      .invoke("check-auth-rate-limit", {
+        body: { email: input.email, recordFailure: true },
+      })
+      .catch(() => {});
+    throw error ?? new Error("INVALID_CREDENTIALS");
+  }
+
+  return data.session;
+}
+
+export async function signOut(): Promise<void> {
+  const { error } = await supabase.auth.signOut();
+  if (error) throw error;
 }

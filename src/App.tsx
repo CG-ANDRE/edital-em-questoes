@@ -3,7 +3,8 @@ import { BrowserRouter, Route, Routes, Navigate } from "react-router-dom";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
-import Login from "./pages/Login";
+import LoginPage from "./pages/public/LoginPage";
+import { RequireAuth } from "./components/RequireAuth";
 import Dashboard from "./pages/Dashboard";
 import Practice from "./pages/Practice";
 import QuestionPage from "./pages/QuestionPage";
@@ -37,9 +38,16 @@ const App = () => (
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<Navigate to="/login" replace />} />
-          <Route path="/login" element={<Login />} />
+          <Route path="/login" element={<LoginPage />} />
           <Route path="/cadastro" element={<SignupPage />} />
-          <Route path="/dashboard" element={<Dashboard />} />
+          <Route
+            path="/dashboard"
+            element={
+              <RequireAuth>
+                <Dashboard />
+              </RequireAuth>
+            }
+          />
           <Route path="/practice" element={<Practice />} />
           <Route path="/question" element={<QuestionPage />} />
           <Route path="/performance" element={<Performance />} />
