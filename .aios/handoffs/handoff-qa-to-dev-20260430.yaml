@@ -1,0 +1,43 @@
+handoff:
+  from_agent: qa
+  to_agent: dev
+  consumed: true
+  story_context:
+    story_id: epic-1-fix
+    story_path: docs/qa/QA_FIX_REQUEST.md
+    story_status: review
+    current_task: "Aplicar fixes dos 3 concerns MEDIUM do QA Gate Epic 1"
+    branch: main
+
+  decisions:
+    - "QA Gate Epic 1: PASS WITH CONCERNS (3 MEDIUM, 2 LOW)"
+    - "User decidiu corrigir os 3 MEDIUMs antes de avançar para Epic 2"
+    - "QA gerou docs/qa/QA_FIX_REQUEST.md com fixes propostos detalhados"
+    - "Esforço total estimado: ~1h"
+
+  fixes_to_apply:
+    - id: M1
+      file: supabase/functions/dsr-delete/index.ts
+      title: "Adicionar rate limit (3 tentativas/hora por email)"
+      effort_minutes: 30
+    - id: M2
+      file: supabase/functions/check-auth-rate-limit/index.ts
+      title: "Proteção anti-flood no recordFailure (10 inserts/min por IP)"
+      effort_minutes: 20
+    - id: M3
+      file: src/features/auth/components/LoginForm.tsx
+      title: "Detecção robusta de erro de credencial (status + regex)"
+      effort_minutes: 15
+
+  validation_after_fixes:
+    - "bun run lint && bun run typecheck && bun run test"
+    - "Re-deploy Edge Functions: dsr-delete + check-auth-rate-limit"
+    - "Ping @qa para re-review e atualizar gate"
+
+  blockers: []
+
+  next_action: >
+    Aplicar os 3 fixes propostos em docs/qa/QA_FIX_REQUEST.md.
+    Após validação verde, deploy das 2 Edge Functions atualizadas.
+    Commitar como "fix(qa): aplicar concerns MEDIUM do gate Epic 1".
+    Sinalizar @qa para re-review.

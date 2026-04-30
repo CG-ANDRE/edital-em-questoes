@@ -40,10 +40,20 @@ export function LoginForm() {
         toast.error(`Muitas tentativas. Tente novamente em ${min} minutos.`);
         return;
       }
-      if (err.message === "INVALID_CREDENTIALS" || err.name === "AuthApiError") {
+
+      // Detecção robusta de credenciais inválidas (não depende de err.name)
+      const status = (err as { status?: number }).status;
+      const isCredentialError =
+        err.message === "INVALID_CREDENTIALS" ||
+        status === 400 ||
+        /invalid.*credential/i.test(err.message) ||
+        /invalid.*login/i.test(err.message);
+
+      if (isCredentialError) {
         toast.error("Email ou senha incorretos");
         return;
       }
+
       toast.error("Erro ao fazer login. Tente novamente.");
       Sentry.captureException(err, { tags: { feature: "auth", action: "signIn" } });
     },

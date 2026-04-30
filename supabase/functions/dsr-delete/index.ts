@@ -28,6 +28,35 @@ Deno.serve(async (req) => {
     const password = typeof body.password === "string" ? body.password : "";
     if (!password) return errorResponse("VALIDATION_ERROR", "Senha obrigatória", 400);
 
+    const ipAddress =
+      req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ??
+      req.headers.get("cf-connecting-ip") ??
+      null;
+
+    // Rate limit: máx 3 falhas de reauth/hora por email (anti-bruteforce)
+    const sinceHour = new Date(Date.now() - 60 * 60 * 1000).toISOString();
+    const { count: recentFailures } = await supabaseAdmin
+      .from("auth_attempts")
+      .select("*", { count: "exact", head: true })
+      .eq("email", user.email)
+      .eq("success", false)
+      .gte("attempted_at", sinceHour);
+
+    if ((recentFailures ?? 0) >= 3) {
+      return new Response(
+        JSON.stringify({
+          error: {
+            code: "RATE_LIMITED",
+            message: "Muitas tentativas. Tente novamente em 1 hora.",
+          },
+        }),
+        {
+          status: 429,
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        }
+      );
+    }
+
     // Re-auth via password (anti-hijack)
     const supabaseAnon = createClient(
       Deno.env.get("SUPABASE_URL")!,
@@ -39,6 +68,17 @@ Deno.serve(async (req) => {
     });
 
     if (reauthError) {
+      // Registrar falha de reauth para alimentar o rate limit
+      await supabaseAdmin
+        .from("auth_attempts")
+        .insert({
+          email: user.email,
+          ip_address: ipAddress,
+          success: false,
+        })
+        .then(() => {})
+        .catch(() => {});
+
       return errorResponse(
         "REAUTH_FAILED",
         "Senha incorreta. Para sua segurança, confirme a senha atual.",
@@ -46,10 +86,6 @@ Deno.serve(async (req) => {
       );
     }
 
-    const ipAddress =
-      req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ??
-      req.headers.get("cf-connecting-ip") ??
-      null;
     const userAgent = req.headers.get("user-agent") ?? null;
 
     // Audit ANTES do delete (FK ON DELETE SET NULL preserva o registro)

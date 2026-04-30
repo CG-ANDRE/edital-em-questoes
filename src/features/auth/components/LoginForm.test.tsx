@@ -95,6 +95,22 @@ describe("LoginForm", () => {
     });
   });
 
+  it("erro com status 400 (credencial inválida sem err.name) exibe mensagem genérica", async () => {
+    const err = new Error("Invalid login credentials") as Error & { status?: number };
+    err.status = 400;
+    signInMock.mockRejectedValue(err);
+    renderForm();
+
+    fireEvent.input(screen.getByLabelText(/^e-mail$/i), { target: { value: "u@t.com" } });
+    fireEvent.input(screen.getByLabelText(/^senha$/i), { target: { value: "x" } });
+    fireEvent.submit(screen.getByRole("button", { name: /entrar/i }).closest("form")!);
+
+    await waitFor(() => {
+      expect(toastErrorMock).toHaveBeenCalledWith("Email ou senha incorretos");
+      expect(captureExceptionMock).not.toHaveBeenCalled();
+    });
+  });
+
   it("erro genérico dispara Sentry", async () => {
     signInMock.mockRejectedValue(new Error("Network error"));
     renderForm();

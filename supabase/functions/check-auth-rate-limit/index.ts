@@ -28,6 +28,18 @@ Deno.serve(async (req) => {
       "unknown";
 
     if (recordFailure) {
+      // Anti-flood: máximo 10 inserts/minuto pelo mesmo IP (evita poluir tabela)
+      const sinceMinute = new Date(Date.now() - 60 * 1000).toISOString();
+      const { count: ipBurst } = await supabase
+        .from("auth_attempts")
+        .select("*", { count: "exact", head: true })
+        .eq("ip_address", ipAddress)
+        .gte("attempted_at", sinceMinute);
+
+      if ((ipBurst ?? 0) >= 10) {
+        return errorResponse("RATE_LIMITED", "Muitas requisições", 429);
+      }
+
       const { error } = await supabase.from("auth_attempts").insert({
         email,
         ip_address: ipAddress,
