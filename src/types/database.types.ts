@@ -211,6 +211,50 @@ export type Database = {
           },
         ]
       }
+      user_editais: {
+        Row: {
+          created_at: string
+          data_inscricao: string | null
+          data_prova: string | null
+          edital_id: string
+          id: string
+          is_active: boolean
+          registered_at: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          data_inscricao?: string | null
+          data_prova?: string | null
+          edital_id: string
+          id?: string
+          is_active?: boolean
+          registered_at?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          data_inscricao?: string | null
+          data_prova?: string | null
+          edital_id?: string
+          id?: string
+          is_active?: boolean
+          registered_at?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_editais_edital_id_fkey"
+            columns: ["edital_id"]
+            isOneToOne: false
+            referencedRelation: "editais"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       users: {
         Row: {
           created_at: string

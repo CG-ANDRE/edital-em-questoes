@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { Star } from "lucide-react";
 import {
   Card,
@@ -11,6 +12,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { formatDateBR } from "@/lib/utils";
 import type { Edital } from "@/features/editais/types";
+import { SelectEditalDialog } from "@/features/editais/components/SelectEditalDialog";
 
 type Props = {
   edital: Edital;
@@ -19,6 +21,7 @@ type Props = {
 };
 
 export function EditalCard({ edital, isFavorited, onToggleFavorite }: Props) {
+  const [dialogOpen, setDialogOpen] = useState(false);
   const dataProva = formatDateBR(edital.dataProva);
   const ini = formatDateBR(edital.dataInscricaoInicio);
   const fim = formatDateBR(edital.dataInscricaoFim);
@@ -71,11 +74,18 @@ export function EditalCard({ edital, isFavorited, onToggleFavorite }: Props) {
           type="button"
           variant="default"
           className="w-full min-h-[44px]"
-          disabled
+          onClick={() => setDialogOpen(true)}
         >
-          Ver edital
+          Estudar para este edital
         </Button>
       </CardFooter>
+
+      <SelectEditalDialog
+        editalId={edital.id}
+        editalTitulo={edital.titulo}
+        open={dialogOpen}
+        onOpenChange={setDialogOpen}
+      />
     </Card>
   );
 }

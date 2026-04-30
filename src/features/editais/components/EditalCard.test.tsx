@@ -1,5 +1,10 @@
 import { describe, it, expect, vi } from "vitest";
 import { render, screen, fireEvent } from "@testing-library/react";
+
+vi.mock("@/features/editais/components/SelectEditalDialog", () => ({
+  SelectEditalDialog: () => null,
+}));
+
 import { EditalCard } from "@/features/editais/components/EditalCard";
 import type { Edital } from "@/features/editais/types";
 
