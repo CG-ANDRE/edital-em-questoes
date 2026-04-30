@@ -1,5 +1,7 @@
+import { lazy, Suspense } from "react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Route, Routes, Navigate } from "react-router-dom";
+import { Skeleton } from "@/components/ui/skeleton";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -9,6 +11,8 @@ import ResetPasswordPage from "./pages/public/ResetPasswordPage";
 import SettingsPage from "./pages/app/SettingsPage";
 import PrivacyPage from "./pages/app/PrivacyPage";
 import { RequireAuth } from "./components/RequireAuth";
+
+const EditaisPage = lazy(() => import("./pages/app/EditaisPage"));
 import Dashboard from "./pages/Dashboard";
 import Practice from "./pages/Practice";
 import QuestionPage from "./pages/QuestionPage";
@@ -67,6 +71,23 @@ const App = () => (
             element={
               <RequireAuth>
                 <PrivacyPage />
+              </RequireAuth>
+            }
+          />
+          <Route
+            path="/editais"
+            element={
+              <RequireAuth>
+                <Suspense
+                  fallback={
+                    <div className="container mx-auto px-4 py-6">
+                      <Skeleton className="h-8 w-64 mb-6" />
+                      <Skeleton className="h-96 w-full" />
+                    </div>
+                  }
+                >
+                  <EditaisPage />
+                </Suspense>
               </RequireAuth>
             }
           />

@@ -1,0 +1,58 @@
+handoff:
+  from_agent: qa
+  to_agent: devops
+  consumed: false
+  story_context:
+    story_id: epic-1
+    story_path: _bmad-output/implementation-artifacts/
+    story_status: done
+    current_task: "Push Epic 1 + atualização do gate para origin/main"
+    branch: main
+
+  decisions:
+    - "QA Gate Epic 1: PASS LIMPO após re-review (2ª iteração)"
+    - "Os 3 MEDIUMs (M1, M2, M3) foram resolvidos no commit 73335d2"
+    - "54/54 testes passando, lint 0 errors, typecheck OK"
+    - "Edge Functions já redeployadas em produção (dsr-delete + check-auth-rate-limit)"
+    - "Vercel auto-deploy ativo: push em main → deploy automático"
+
+  qa_summary:
+    verdict: PASS
+    iterations: 2
+    blocking_issues: 0
+    non_blocking_low: 2  # L1 email enumeration (Supabase), L2 Dashboard config
+
+  pre_push_checks:
+    - "Lint 0 errors ✅"
+    - "Typecheck OK ✅"
+    - "54/54 testes passando ✅"
+    - "Edge Functions deployadas ✅"
+    - "Husky pre-commit ativo ✅"
+
+  files_uncommitted:
+    - "docs/qa/gates/epic-1-qa-gate.md (gate atualizado para PASS)"
+    - ".aios/handoffs/handoff-dev-to-qa-rereview-20260430.yaml (consumed)"
+
+  blockers: []
+
+  next_action: >
+    1. Commitar atualização do gate como "docs(qa): Epic 1 gate atualizado para PASS após re-review"
+    2. Executar *pre-push para validar todos os quality gates
+    3. Executar *push para enviar todos os commits do Epic 1 para origin/main
+    4. Confirmar Vercel auto-deploy disparou (ci.yml + deploy de produção)
+    5. Validar workflow deploy-migrations.yml (último push tem migrations novas)
+    6. (Pós-push) Documentar no Dashboard Supabase: adicionar reset-password URL aos Redirect URLs (L2)
+
+  commits_to_push:
+    - 5d01135 - "feat: Story 1.1 — Setup Técnico Inicial"
+    - 5a96bfb - "feat: Story 1.2 — Schema Inicial e RLS Policies Base"
+    - 4b58d60 - "feat: Story 1.2 — migrations aplicadas + tipos TS gerados"
+    - 1a1b292 - "feat: Story 1.3 — Cadastro de Usuário com Consentimento LGPD"
+    - e6c2abc - "feat: Story 1.4 — Login e Logout"
+    - 12df355 - "feat: Story 1.5 — Recuperação de Senha por Email"
+    - 53ec8ee - "feat: Story 1.6 — Atualização de Perfil"
+    - 5df37d6 - "feat: Story 1.7 — LGPD Self-Service Exportação de Dados (DSR)"
+    - 2e1492c - "feat: Story 1.8 — LGPD Self-Service Exclusão de Conta"
+    - e9987b0 - "docs(qa): Epic 1 QA Gate — PASS WITH CONCERNS"
+    - 73335d2 - "fix(qa): aplicar concerns MEDIUM do gate Epic 1"
+    - "(novo) docs(qa): Epic 1 gate atualizado para PASS após re-review"

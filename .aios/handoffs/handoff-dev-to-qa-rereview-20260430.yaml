@@ -1,0 +1,36 @@
+handoff:
+  from_agent: dev
+  to_agent: qa
+  consumed: true
+  story_context:
+    story_id: epic-1-fix
+    story_path: docs/qa/QA_FIX_REQUEST.md
+    story_status: review
+    current_task: "Re-review do gate Epic 1 após aplicar fixes M1, M2, M3"
+    branch: main
+
+  decisions:
+    - "Os 3 MEDIUMs do QA Fix Request foram aplicados conforme proposto"
+    - "Edge Functions redeployadas (dsr-delete e check-auth-rate-limit)"
+    - "Teste de regressão adicionado para M3 (status 400 sem err.name)"
+    - "54/54 testes passando, lint 0 errors, typecheck OK"
+
+  fixes_applied:
+    - id: M1
+      file: supabase/functions/dsr-delete/index.ts
+      what: "Rate limit 3 reauth-failures/hora por email + insert em auth_attempts no reauthError"
+    - id: M2
+      file: supabase/functions/check-auth-rate-limit/index.ts
+      what: "Anti-flood 10 inserts/min por IP no caminho recordFailure"
+    - id: M3
+      file: src/features/auth/components/LoginForm.tsx
+      what: "Detecção robusta de credencial inválida (status 400 + regex em message)"
+
+  commit: 73335d2
+
+  blockers: []
+
+  next_action: >
+    Re-revisar o gate. Esperado: verdict atualizar de CONCERNS para PASS limpo.
+    Atualizar docs/qa/gates/epic-1-qa-gate.md com nova decisão.
+    Após PASS limpo, sinalizar @devops para push.

@@ -1,31 +1,51 @@
 ---
 storyId: epic-1
 title: Epic 1 — Foundation & User Onboarding
-verdict: CONCERNS
+verdict: PASS
 reviewer: Quinn (QA / Test Architect)
 reviewDate: 2026-04-30
+reviewIterations: 2
 storiesReviewed: [1.1, 1.2, 1.3, 1.4, 1.5, 1.6, 1.7, 1.8]
 ---
 
 # QA Gate — Epic 1
 
-## Verdict: **PASS WITH CONCERNS** ⚠️
+## Verdict: **PASS** ✅ (após re-review)
 
-Epic funcional, seguro para MVP, com 3 concerns MEDIUM e 2 LOW que devem ser endereçados como tech debt ou em Epic 2. **Não bloqueia push para produção.**
+**1ª iteração:** PASS WITH CONCERNS (3 MEDIUM + 2 LOW).
+**2ª iteração:** PASS limpo após @dev aplicar fixes M1, M2, M3 no commit `73335d2`.
+
+Epic 1 está **APROVADO para push e deploy em produção**.
 
 ---
 
-## 7 Quality Checks
+## Re-review (2ª iteração)
+
+| ID | Concern Original | Fix Aplicado | Verdict |
+|----|------------------|--------------|---------|
+| M1 | Rate limit ausente em dsr-delete | 3 reauth-failures/h por email + insert em auth_attempts no REAUTH_FAILED | ✅ APROVADO |
+| M2 | recordFailure abusável (DoS leve) | 10 inserts/min por IP no caminho recordFailure | ✅ APROVADO |
+| M3 | Detecção AuthApiError frágil | status === 400 + regex em message + teste de regressão | ✅ APROVADO |
+
+**LOWs (mantidos como aceitos):**
+- L1 — Email enumeration no signup: limitação Supabase, trade-off MVP aceito
+- L2 — Config Dashboard Supabase pendente (Redirect URLs): manual, fora de código
+
+---
+
+---
+
+## 7 Quality Checks (após fixes)
 
 | # | Check | Resultado | Notas |
 |---|-------|-----------|-------|
 | 1 | Code review (patterns) | ✅ PASS | Estrutura features-first respeitada; path aliases consistentes |
-| 2 | Unit tests | ✅ PASS | 53/53 passing, 18 test files; cobertura ≥80% nas features críticas |
+| 2 | Unit tests | ✅ PASS | 54/54 passing, 18 test files; cobertura ≥80% nas features críticas |
 | 3 | Acceptance Criteria | ✅ PASS | 8 stories implementadas; 2 ACs adiados explicitamente (1.6 user_editais, 1.8 rate limit dedicado) |
 | 4 | No regressions | ✅ PASS | Lovable starter preservado; lint pré-existente corrigido |
-| 5 | Performance | ✅ PASS | Bundle não-impactado; queries usam índices criados (idx_auth_attempts_*, idx_audit_log_*) |
-| 6 | Security | ⚠️ CONCERNS | RLS OK, anti-enumeration OK, auth flows OK; 2 gaps de rate limit (ver abaixo) |
-| 7 | Documentation | ✅ PASS | Stories commitadas com decisões; commit messages detalhados |
+| 5 | Performance | ✅ PASS | Bundle não-impactado; queries usam índices (idx_auth_attempts_*, idx_audit_log_*) |
+| 6 | Security | ✅ PASS | RLS OK, anti-enumeration OK, rate limits cobrindo todos endpoints destrutivos |
+| 7 | Documentation | ✅ PASS | Stories commitadas com decisões; commit messages detalhados; gate atualizado |
 
 ---
 
@@ -124,22 +144,30 @@ Epic funcional, seguro para MVP, com 3 concerns MEDIUM e 2 LOW que devem ser end
 
 ---
 
-## Issues Summary
+## Issues Summary (final)
 
 | Severity | Count | Action |
 |----------|-------|--------|
 | CRITICAL | 0 | — |
 | HIGH | 0 | — |
-| MEDIUM | 3 | Tech debt para Epic 2 |
-| LOW | 2 | Acknowledge + monitor |
-| **Total** | **5** | **Não bloqueia merge/push** |
+| MEDIUM | 0 | ✅ Todos resolvidos no commit `73335d2` |
+| LOW | 2 | Acknowledged (L1 limitação Supabase, L2 config Dashboard) |
+| **Total bloqueante** | **0** | **Aprovado para push** |
 
 ---
 
 ## Gate Decision
 
-**VERDICT: PASS WITH CONCERNS**
+**VERDICT: PASS** ✅
 
-Epic 1 está pronto para promoção a `Done` e push para produção. Os 3 concerns MEDIUM devem ser registrados no backlog do Epic 2 como tech debt explícito antes do início do Epic 3.
+Epic 1 está **APROVADO** para:
+- Promoção das 8 stories a status `Done`
+- Push para `main` no GitHub remoto
+- Deploy em produção via Vercel
+
+Próximo agente: **@devops (Gage)** para `*push` e validação dos workflows CI/CD.
+
+Action item LOW pendente (não-bloqueante):
+- **L2:** Configurar Redirect URLs no Dashboard Supabase antes do primeiro teste de fluxo de reset de senha em produção.
 
 — Quinn, guardião da qualidade 🛡️

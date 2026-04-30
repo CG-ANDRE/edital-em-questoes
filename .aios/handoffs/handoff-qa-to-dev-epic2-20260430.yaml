@@ -1,0 +1,59 @@
+handoff:
+  from_agent: qa
+  to_agent: dev
+  consumed: true
+  story_context:
+    story_id: '2.1'
+    story_path: _bmad-output/implementation-artifacts/2-1-browse-catalogo-de-editais.md
+    story_status: ready-for-dev
+    current_task: "Implementar Epic 2 completo (5 stories sequenciais)"
+    branch: main
+
+  decisions:
+    - "Epic 1 entregue, gate PASS limpo, comentário linguagem simples no Monday"
+    - "Epic 2 está em Sprint Atual no Monday (grupo group_mm2qpez)"
+    - "Stories BMAD já detalhadas — @dev lê direto de _bmad-output/implementation-artifacts/"
+    - "Mesmo fluxo AIOS sobre BMAD usado no Epic 1"
+
+  epic_2_stories:
+    - id: '2.1'
+      file: _bmad-output/implementation-artifacts/2-1-browse-catalogo-de-editais.md
+      title: Browse Catálogo de Editais
+      type: fullstack
+    - id: '2.2'
+      file: _bmad-output/implementation-artifacts/2-2-selecionar-edital-e-registrar-datas.md
+      title: Selecionar Edital + Registrar Datas
+      type: fullstack
+      depends_on: '2.1'
+    - id: '2.3'
+      file: _bmad-output/implementation-artifacts/2-3-founder-publica-edita-agenda-editais.md
+      title: Founder publica/edita/agenda editais
+      type: admin
+      depends_on: '2.1'
+    - id: '2.4'
+      file: _bmad-output/implementation-artifacts/2-4-founder-segmenta-visibilidade-do-edital.md
+      title: Founder segmenta visibilidade do edital
+      type: admin
+      depends_on: '2.3'
+    - id: '2.5'
+      file: _bmad-output/implementation-artifacts/2-5-multi-edital-switch-e-follow-up-to-3.md
+      title: Multi-edital switch + follow up to 3 [Growth]
+      type: fullstack
+      depends_on: '2.2'
+
+  epic_1_baseline:
+    - "Tabelas: users, user_consents, audit_log, auth_attempts (+ RLS ativa)"
+    - "Edge Functions: record-consent, check-auth-rate-limit, dsr-export, dsr-delete"
+    - "Auth flow completo: signup, login, logout, reset password, RequireAuth"
+    - "Settings: ProfileForm + DSR (export + delete)"
+    - "Stack: React 18 + Vite + Shadcn + RHF + Zod + TanStack Query + Supabase"
+
+  blockers: []
+
+  next_action: >
+    Implementar Epic 2 story por story (2.1 → 2.5).
+    Iniciar pela 2.1 lendo o arquivo completo.
+    Cada story: implementar → lint+typecheck+tests verde → commit local.
+    Migrations novas: aplicar via supabase db push --linked + regerar database.types.ts.
+    Edge Functions novas: deploy via supabase functions deploy <name>.
+    Ao concluir 2.5: sinalizar @qa para gate Epic 2.

@@ -110,6 +110,63 @@ export type Database = {
         }
         Relationships: []
       }
+      editais: {
+        Row: {
+          banca: string
+          cargo: string
+          created_at: string
+          data_inscricao_fim: string | null
+          data_inscricao_inicio: string | null
+          data_prova: string | null
+          descricao: string | null
+          id: string
+          orgao: string
+          published_at: string | null
+          search_vector: unknown
+          slug: string
+          status: Database["public"]["Enums"]["edital_status_enum"]
+          titulo: string
+          updated_at: string
+          visibility: Json
+        }
+        Insert: {
+          banca: string
+          cargo: string
+          created_at?: string
+          data_inscricao_fim?: string | null
+          data_inscricao_inicio?: string | null
+          data_prova?: string | null
+          descricao?: string | null
+          id?: string
+          orgao: string
+          published_at?: string | null
+          search_vector?: unknown
+          slug: string
+          status?: Database["public"]["Enums"]["edital_status_enum"]
+          titulo: string
+          updated_at?: string
+          visibility?: Json
+        }
+        Update: {
+          banca?: string
+          cargo?: string
+          created_at?: string
+          data_inscricao_fim?: string | null
+          data_inscricao_inicio?: string | null
+          data_prova?: string | null
+          descricao?: string | null
+          id?: string
+          orgao?: string
+          published_at?: string | null
+          search_vector?: unknown
+          slug?: string
+          status?: Database["public"]["Enums"]["edital_status_enum"]
+          titulo?: string
+          updated_at?: string
+          visibility?: Json
+        }
+        Relationships: []
+      }
       user_consents: {
         Row: {
           consent_type: string
@@ -198,7 +255,7 @@ export type Database = {
       [_ in never]: never
     }
     Enums: {
-      [_ in never]: never
+      edital_status_enum: "draft" | "scheduled" | "published" | "archived"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -328,6 +385,8 @@ export const Constants = {
     Enums: {},
   },
   public: {
-    Enums: {},
+    Enums: {
+      edital_status_enum: ["draft", "scheduled", "published", "archived"],
+    },
   },
 } as const
