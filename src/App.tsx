@@ -6,6 +6,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import LoginPage from "./pages/public/LoginPage";
 import ForgotPasswordPage from "./pages/public/ForgotPasswordPage";
 import ResetPasswordPage from "./pages/public/ResetPasswordPage";
+import SettingsPage from "./pages/app/SettingsPage";
 import { RequireAuth } from "./components/RequireAuth";
 import Dashboard from "./pages/Dashboard";
 import Practice from "./pages/Practice";
@@ -49,6 +50,14 @@ const App = () => (
             element={
               <RequireAuth>
                 <Dashboard />
+              </RequireAuth>
+            }
+          />
+          <Route
+            path="/settings"
+            element={
+              <RequireAuth>
+                <SettingsPage />
               </RequireAuth>
             }
           />
