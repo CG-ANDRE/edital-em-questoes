@@ -1,18 +1,22 @@
 ---
 storyId: epic-2
 title: Epic 2 — Edital Discovery & Selection
-verdict: CONCERNS
+verdict: PASS
 reviewer: Quinn (QA / Test Architect)
 reviewDate: 2026-04-30
+reviewIterations: 2
 storiesReviewed: [2.1, 2.2, 2.3, 2.4]
 storyDeferred: 2.5
 ---
 
 # QA Gate — Epic 2
 
-## Verdict: **PASS WITH CONCERNS** ⚠️
+## Verdict: **PASS** ✅ (após re-review)
 
-Epic funcional e seguro para MVP, com 3 concerns MEDIUM e 1 LOW. **Não bloqueia push**.
+**1ª iteração:** PASS WITH CONCERNS (3 MEDIUM + 1 LOW).
+**2ª iteração:** PASS limpo após @dev aplicar fixes M1, M2, L1 no commit `0f27f5c`.
+
+Epic 2 está **APROVADO para push e deploy**. M3 (curator policy) fica como follow-up para Epic 8 conforme acordado.
 
 Story 2.5 (Multi-edital) está deferida com decisão técnica documentada em `docs/decisions/STORY-2.5-DEFERRED.md` — depende do Epic 7 (subscriptions). Esta deferral é correta e não bloqueia o gate.
 

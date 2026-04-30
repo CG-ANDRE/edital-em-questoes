@@ -16,6 +16,8 @@ import { RequireRole } from "./components/RequireRole";
 const EditaisPage = lazy(() => import("./pages/app/EditaisPage"));
 const AdminEditaisPage = lazy(() => import("./pages/admin/AdminEditaisPage"));
 const AdminEditalEditPage = lazy(() => import("./pages/admin/AdminEditalEditPage"));
+const AdminQuestionsPage = lazy(() => import("./pages/admin/AdminQuestionsPage"));
+const AdminQuestionEditPage = lazy(() => import("./pages/admin/AdminQuestionEditPage"));
 import Dashboard from "./pages/Dashboard";
 import Practice from "./pages/Practice";
 import QuestionPage from "./pages/QuestionPage";
@@ -129,6 +131,37 @@ const App = () => (
               <RequireRole role="founder">
                 <Suspense fallback={<Skeleton className="h-96 w-full m-6" />}>
                   <AdminEditalEditPage />
+                </Suspense>
+              </RequireRole>
+            }
+          />
+          {/* Admin Questions (Story 3.1 — Curator/Founder) */}
+          <Route
+            path="/admin/questions"
+            element={
+              <RequireRole role="founder">
+                <Suspense fallback={<Skeleton className="h-96 w-full m-6" />}>
+                  <AdminQuestionsPage />
+                </Suspense>
+              </RequireRole>
+            }
+          />
+          <Route
+            path="/admin/questions/nova"
+            element={
+              <RequireRole role="founder">
+                <Suspense fallback={<Skeleton className="h-96 w-full m-6" />}>
+                  <AdminQuestionEditPage />
+                </Suspense>
+              </RequireRole>
+            }
+          />
+          <Route
+            path="/admin/questions/:id/editar"
+            element={
+              <RequireRole role="founder">
+                <Suspense fallback={<Skeleton className="h-96 w-full m-6" />}>
+                  <AdminQuestionEditPage />
                 </Suspense>
               </RequireRole>
             }

@@ -167,6 +167,107 @@ export type Database = {
         }
         Relationships: []
       }
+      question_revisions: {
+        Row: {
+          after_data: Json
+          before_data: Json | null
+          change_reason: string | null
+          change_type: string
+          id: string
+          question_id: string
+          revised_at: string
+          revised_by: string | null
+        }
+        Insert: {
+          after_data: Json
+          before_data?: Json | null
+          change_reason?: string | null
+          change_type: string
+          id?: string
+          question_id: string
+          revised_at?: string
+          revised_by?: string | null
+        }
+        Update: {
+          after_data?: Json
+          before_data?: Json | null
+          change_reason?: string | null
+          change_type?: string
+          id?: string
+          question_id?: string
+          revised_at?: string
+          revised_by?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "question_revisions_question_id_fkey"
+            columns: ["question_id"]
+            isOneToOne: false
+            referencedRelation: "questions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      questions: {
+        Row: {
+          alternativas: Json
+          banca: string | null
+          cargo_alvo: string | null
+          correct_answer: string
+          created_at: string
+          created_by: string | null
+          dificuldade: Database["public"]["Enums"]["question_dificuldade_enum"]
+          enunciado: string
+          id: string
+          image_url: string | null
+          justificativa: string
+          materia: string
+          search_vector: unknown
+          source_type: Database["public"]["Enums"]["question_source_type_enum"]
+          status: Database["public"]["Enums"]["question_status_enum"]
+          updated_at: string
+          updated_by: string | null
+        }
+        Insert: {
+          alternativas: Json
+          banca?: string | null
+          cargo_alvo?: string | null
+          correct_answer: string
+          created_at?: string
+          created_by?: string | null
+          dificuldade?: Database["public"]["Enums"]["question_dificuldade_enum"]
+          enunciado: string
+          id?: string
+          image_url?: string | null
+          justificativa: string
+          materia: string
+          search_vector?: unknown
+          source_type?: Database["public"]["Enums"]["question_source_type_enum"]
+          status?: Database["public"]["Enums"]["question_status_enum"]
+          updated_at?: string
+          updated_by?: string | null
+        }
+        Update: {
+          alternativas?: Json
+          banca?: string | null
+          cargo_alvo?: string | null
+          correct_answer?: string
+          created_at?: string
+          created_by?: string | null
+          dificuldade?: Database["public"]["Enums"]["question_dificuldade_enum"]
+          enunciado?: string
+          id?: string
+          image_url?: string | null
+          justificativa?: string
+          materia?: string
+          search_vector?: unknown
+          source_type?: Database["public"]["Enums"]["question_source_type_enum"]
+          status?: Database["public"]["Enums"]["question_status_enum"]
+          updated_at?: string
+          updated_by?: string | null
+        }
+        Relationships: []
+      }
       user_consents: {
         Row: {
           consent_type: string
@@ -300,6 +401,13 @@ export type Database = {
     }
     Enums: {
       edital_status_enum: "draft" | "scheduled" | "published" | "archived"
+      question_dificuldade_enum: "facil" | "medio" | "dificil"
+      question_source_type_enum: "manual" | "ai"
+      question_status_enum:
+        | "draft"
+        | "published"
+        | "archived"
+        | "pending_review"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -431,6 +539,14 @@ export const Constants = {
   public: {
     Enums: {
       edital_status_enum: ["draft", "scheduled", "published", "archived"],
+      question_dificuldade_enum: ["facil", "medio", "dificil"],
+      question_source_type_enum: ["manual", "ai"],
+      question_status_enum: [
+        "draft",
+        "published",
+        "archived",
+        "pending_review",
+      ],
     },
   },
 } as const
