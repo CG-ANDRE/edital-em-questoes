@@ -167,6 +167,39 @@ export type Database = {
         }
         Relationships: []
       }
+      question_editais: {
+        Row: {
+          created_at: string
+          edital_id: string
+          question_id: string
+        }
+        Insert: {
+          created_at?: string
+          edital_id: string
+          question_id: string
+        }
+        Update: {
+          created_at?: string
+          edital_id?: string
+          question_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "question_editais_edital_id_fkey"
+            columns: ["edital_id"]
+            isOneToOne: false
+            referencedRelation: "editais"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "question_editais_question_id_fkey"
+            columns: ["question_id"]
+            isOneToOne: false
+            referencedRelation: "questions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       question_revisions: {
         Row: {
           after_data: Json
