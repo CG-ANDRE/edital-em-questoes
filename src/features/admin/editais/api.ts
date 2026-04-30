@@ -1,5 +1,9 @@
 import { supabase } from "@/lib/supabase";
-import type { EditalRow, EditalStatus } from "@/features/editais/types";
+import type {
+  EditalRow,
+  EditalStatus,
+  EditalVisibility,
+} from "@/features/editais/types";
 
 export type AdminEditalListFilters = {
   status?: EditalStatus | "all";
@@ -50,6 +54,7 @@ export type EditalCreateInput = {
   data_inscricao_fim: string | null;
   status: EditalStatus;
   published_at: string | null;
+  visibility?: EditalVisibility;
 };
 
 export async function createEdital(input: EditalCreateInput): Promise<EditalRow> {

@@ -28,7 +28,8 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { slugify } from "@/lib/utils";
-import type { EditalRow } from "@/features/editais/types";
+import type { EditalRow, EditalVisibility } from "@/features/editais/types";
+import { VisibilityEditor } from "@/features/admin/editais/components/VisibilityEditor";
 
 type Props = {
   initial?: EditalRow;
@@ -47,6 +48,9 @@ export function EditalForm({ initial, onSaved }: Props) {
   const qc = useQueryClient();
   const [slugDirty, setSlugDirty] = useState(!!initial);
   const [slugError, setSlugError] = useState<string | null>(null);
+  const [visibility, setVisibility] = useState<EditalVisibility>(
+    (initial?.visibility as EditalVisibility | null) ?? { type: "public" }
+  );
 
   const form = useForm<EditalCreateInputForm>({
     resolver: zodResolver(editalCreateSchema),
@@ -95,6 +99,7 @@ export function EditalForm({ initial, onSaved }: Props) {
           values.status === "published"
             ? initial?.published_at ?? new Date().toISOString()
             : initial?.published_at ?? null,
+        visibility,
       };
       if (initial) {
         return updateEdital(initial.id, payload);
@@ -220,6 +225,11 @@ export function EditalForm({ initial, onSaved }: Props) {
             </p>
           )}
         </div>
+      </div>
+
+      <div className="space-y-2 border-t pt-4">
+        <Label className="text-base font-semibold">Visibilidade</Label>
+        <VisibilityEditor value={visibility} onChange={setVisibility} />
       </div>
 
       <div className="space-y-2">

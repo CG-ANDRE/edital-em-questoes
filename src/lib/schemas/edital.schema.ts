@@ -86,3 +86,16 @@ export const editalCreateSchema = z
   });
 
 export type EditalCreateInputForm = z.infer<typeof editalCreateSchema>;
+
+export const visibilitySchema = z.discriminatedUnion("type", [
+  z.object({ type: z.literal("public") }),
+  z.object({ type: z.literal("beta") }),
+  z.object({
+    type: z.literal("allowlist"),
+    userIds: z
+      .array(z.string().uuid("UUID inválido"))
+      .min(1, "Adicione ao menos 1 usuário"),
+  }),
+]);
+
+export type EditalVisibilityInput = z.infer<typeof visibilitySchema>;
