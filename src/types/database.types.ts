@@ -301,6 +301,54 @@ export type Database = {
         }
         Relationships: []
       }
+      user_answers: {
+        Row: {
+          answered_at: string
+          edital_id: string | null
+          id: string
+          is_correct: boolean
+          question_id: string | null
+          selected_answer: string
+          time_spent_ms: number
+          user_id: string
+        }
+        Insert: {
+          answered_at?: string
+          edital_id?: string | null
+          id?: string
+          is_correct: boolean
+          question_id?: string | null
+          selected_answer: string
+          time_spent_ms: number
+          user_id: string
+        }
+        Update: {
+          answered_at?: string
+          edital_id?: string | null
+          id?: string
+          is_correct?: boolean
+          question_id?: string | null
+          selected_answer?: string
+          time_spent_ms?: number
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_answers_edital_id_fkey"
+            columns: ["edital_id"]
+            isOneToOne: false
+            referencedRelation: "editais"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "user_answers_question_id_fkey"
+            columns: ["question_id"]
+            isOneToOne: false
+            referencedRelation: "questions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       user_consents: {
         Row: {
           consent_type: string

@@ -18,6 +18,7 @@ const AdminEditaisPage = lazy(() => import("./pages/admin/AdminEditaisPage"));
 const AdminEditalEditPage = lazy(() => import("./pages/admin/AdminEditalEditPage"));
 const AdminQuestionsPage = lazy(() => import("./pages/admin/AdminQuestionsPage"));
 const AdminQuestionEditPage = lazy(() => import("./pages/admin/AdminQuestionEditPage"));
+const AnswerQuestionPage = lazy(() => import("./pages/app/AnswerQuestionPage"));
 import Dashboard from "./pages/Dashboard";
 import Practice from "./pages/Practice";
 import QuestionPage from "./pages/QuestionPage";
@@ -92,6 +93,16 @@ const App = () => (
                   }
                 >
                   <EditaisPage />
+                </Suspense>
+              </RequireAuth>
+            }
+          />
+          <Route
+            path="/praticar"
+            element={
+              <RequireAuth>
+                <Suspense fallback={<Skeleton className="h-96 w-full m-6" />}>
+                  <AnswerQuestionPage />
                 </Suspense>
               </RequireAuth>
             }
