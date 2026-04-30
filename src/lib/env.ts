@@ -1,11 +1,14 @@
 import { z } from "zod";
 
+const optionalString = (schema: z.ZodString) =>
+  z.preprocess((v) => (v === "" ? undefined : v), schema.optional());
+
 const envSchema = z.object({
   VITE_SUPABASE_URL: z.string().url(),
   VITE_SUPABASE_ANON_KEY: z.string().min(1),
-  VITE_SENTRY_DSN: z.string().url().optional(),
-  VITE_POSTHOG_KEY: z.string().min(1).optional(),
-  VITE_POSTHOG_HOST: z.string().url().optional(),
+  VITE_SENTRY_DSN: optionalString(z.string().url()),
+  VITE_POSTHOG_KEY: optionalString(z.string().min(1)),
+  VITE_POSTHOG_HOST: optionalString(z.string().url()),
   MODE: z.enum(["development", "production", "test"]).default("development"),
 });
 

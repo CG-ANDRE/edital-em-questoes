@@ -40,3 +40,4 @@ supabase/.temp/
 # BMAD outputs (artefatos gerados por agentes — não versionar drafts)
 _bmad-output/
 _bmad/_memory/
+.vercel

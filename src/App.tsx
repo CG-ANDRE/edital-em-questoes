@@ -14,6 +14,7 @@ import Plans from "./pages/Plans";
 import Planning from "./pages/Planning";
 import NotFound from "./pages/NotFound";
 import StudySession from "./pages/StudySession";
+import SignupPage from "./pages/public/SignupPage";
 import AdminDashboard from "./pages/admin/AdminDashboard";
 import AdminStudents from "./pages/admin/AdminStudents";
 import AdminStudentDetail from "./pages/admin/AdminStudentDetail";
@@ -37,6 +38,7 @@ const App = () => (
         <Routes>
           <Route path="/" element={<Navigate to="/login" replace />} />
           <Route path="/login" element={<Login />} />
+          <Route path="/cadastro" element={<SignupPage />} />
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/practice" element={<Practice />} />
           <Route path="/question" element={<QuestionPage />} />
