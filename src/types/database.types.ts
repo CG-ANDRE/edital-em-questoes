@@ -200,6 +200,67 @@ export type Database = {
           },
         ]
       }
+      question_reports: {
+        Row: {
+          comment: string | null
+          created_at: string
+          id: string
+          question_id: string
+          reason: Database["public"]["Enums"]["question_report_reason_enum"]
+          resolved_at: string | null
+          resolved_by: string | null
+          status: Database["public"]["Enums"]["question_report_status_enum"]
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          comment?: string | null
+          created_at?: string
+          id?: string
+          question_id: string
+          reason: Database["public"]["Enums"]["question_report_reason_enum"]
+          resolved_at?: string | null
+          resolved_by?: string | null
+          status?: Database["public"]["Enums"]["question_report_status_enum"]
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          comment?: string | null
+          created_at?: string
+          id?: string
+          question_id?: string
+          reason?: Database["public"]["Enums"]["question_report_reason_enum"]
+          resolved_at?: string | null
+          resolved_by?: string | null
+          status?: Database["public"]["Enums"]["question_report_status_enum"]
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "question_reports_question_id_fkey"
+            columns: ["question_id"]
+            isOneToOne: false
+            referencedRelation: "questions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "question_reports_resolved_by_fkey"
+            columns: ["resolved_by"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "question_reports_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       question_revisions: {
         Row: {
           after_data: Json
@@ -483,6 +544,15 @@ export type Database = {
     Enums: {
       edital_status_enum: "draft" | "scheduled" | "published" | "archived"
       question_dificuldade_enum: "facil" | "medio" | "dificil"
+      question_report_reason_enum:
+        | "gabarito_incorreto"
+        | "enunciado_ambiguo"
+        | "outro"
+      question_report_status_enum:
+        | "open"
+        | "reviewing"
+        | "resolved"
+        | "dismissed"
       question_source_type_enum: "manual" | "ai"
       question_status_enum:
         | "draft"
@@ -621,6 +691,17 @@ export const Constants = {
     Enums: {
       edital_status_enum: ["draft", "scheduled", "published", "archived"],
       question_dificuldade_enum: ["facil", "medio", "dificil"],
+      question_report_reason_enum: [
+        "gabarito_incorreto",
+        "enunciado_ambiguo",
+        "outro",
+      ],
+      question_report_status_enum: [
+        "open",
+        "reviewing",
+        "resolved",
+        "dismissed",
+      ],
       question_source_type_enum: ["manual", "ai"],
       question_status_enum: [
         "draft",

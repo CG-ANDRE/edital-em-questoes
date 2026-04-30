@@ -1,5 +1,6 @@
 import { supabase } from "@/lib/supabase";
-import type { TablesInsert } from "@/types/database.types";
+import type { Tables, TablesInsert } from "@/types/database.types";
+import type { CreateQuestionReportInput } from "@/lib/schemas/question-report.schema";
 import type {
   AnswerLabel,
   AnswerQuestionInput,
@@ -7,6 +8,8 @@ import type {
   QuestionAlternativa,
   UserAnswer,
 } from "./types";
+
+export type QuestionReport = Tables<"question_reports">;
 
 /**
  * Busca a próxima questão para o usuário responder no edital ativo.
@@ -91,4 +94,32 @@ export function parseAlternativas(q: Question): QuestionAlternativa[] {
 
 export function correctAnswerOf(q: Question): AnswerLabel {
   return q.correct_answer as AnswerLabel;
+}
+
+// Story 3.5 — Reportar questão
+export async function createQuestionReport(
+  input: CreateQuestionReportInput,
+  userId: string
+): Promise<QuestionReport> {
+  const payload: TablesInsert<"question_reports"> = {
+    question_id: input.questionId,
+    user_id: userId,
+    reason: input.reason,
+    comment: input.comment?.trim() || null,
+  };
+
+  const { data, error } = await supabase
+    .from("question_reports")
+    .insert(payload)
+    .select()
+    .single();
+
+  if (error) {
+    const msg = error.message?.toLowerCase() ?? "";
+    if (msg.includes("rate_limit_exceeded")) {
+      throw new Error("RATE_LIMIT_EXCEEDED");
+    }
+    throw new Error("REPORT_FAILED");
+  }
+  return data;
 }

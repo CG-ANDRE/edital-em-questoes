@@ -1,9 +1,11 @@
+import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { CheckCircle2, XCircle } from "lucide-react";
+import { CheckCircle2, XCircle, Flag } from "lucide-react";
 import { parseAlternativas, correctAnswerOf } from "@/features/questions/api";
 import type { AnswerLabel, Question } from "@/features/questions/types";
 import type { UserAnswer } from "@/features/questions/types";
+import { ReportQuestionDialog } from "@/features/questions/components/ReportQuestionDialog";
 
 type Props = {
   question: Question;
@@ -12,6 +14,7 @@ type Props = {
 };
 
 export function AnswerFeedback({ question, answer, onNext }: Props) {
+  const [reportOpen, setReportOpen] = useState(false);
   const alternativas = parseAlternativas(question);
   const correct = correctAnswerOf(question);
   const selected = answer.selected_answer as AnswerLabel;
@@ -86,11 +89,26 @@ export function AnswerFeedback({ question, answer, onNext }: Props) {
         </CardContent>
       </Card>
 
-      <div className="flex justify-end">
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={() => setReportOpen(true)}
+          className="text-muted-foreground"
+        >
+          <Flag className="h-4 w-4 mr-1" />
+          Reportar problema
+        </Button>
         <Button onClick={onNext} className="min-h-[44px]">
           Próxima questão
         </Button>
       </div>
+
+      <ReportQuestionDialog
+        questionId={question.id}
+        open={reportOpen}
+        onOpenChange={setReportOpen}
+      />
     </div>
   );
 }
