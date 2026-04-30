@@ -1,0 +1,451 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+    <title>Edital em Questões — Relatório de Progresso</title>
+    <style>
+      :root {
+        --bg: #fafaf9;
+        --panel: #ffffff;
+        --border: #e7e5e4;
+        --text: #1c1917;
+        --muted: #78716c;
+        --primary: #0f766e;
+        --primary-soft: #ccfbf1;
+        --success: #16a34a;
+        --warning: #d97706;
+        --danger: #dc2626;
+        --accent: #2563eb;
+      }
+      * { box-sizing: border-box; }
+      html, body {
+        margin: 0;
+        padding: 0;
+        background: var(--bg);
+        color: var(--text);
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+        line-height: 1.6;
+        font-size: 16px;
+      }
+      .container {
+        max-width: 960px;
+        margin: 0 auto;
+        padding: 32px 20px 80px;
+      }
+      header.report-header {
+        margin-bottom: 32px;
+        padding-bottom: 24px;
+        border-bottom: 1px solid var(--border);
+      }
+      .eyebrow {
+        display: inline-block;
+        background: var(--primary-soft);
+        color: var(--primary);
+        font-size: 12px;
+        font-weight: 600;
+        letter-spacing: 0.05em;
+        text-transform: uppercase;
+        padding: 4px 10px;
+        border-radius: 999px;
+        margin-bottom: 12px;
+      }
+      h1 {
+        font-size: 32px;
+        margin: 0 0 8px;
+        line-height: 1.2;
+      }
+      .subtitle {
+        color: var(--muted);
+        font-size: 17px;
+        margin: 0;
+      }
+      .meta {
+        margin-top: 20px;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 24px;
+        color: var(--muted);
+        font-size: 14px;
+      }
+      .meta strong { color: var(--text); }
+      h2 {
+        font-size: 22px;
+        margin: 48px 0 20px;
+        padding-bottom: 8px;
+        border-bottom: 1px solid var(--border);
+      }
+      .summary-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 16px;
+        margin-bottom: 32px;
+      }
+      .stat {
+        background: var(--panel);
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        padding: 20px;
+      }
+      .stat-value {
+        font-size: 32px;
+        font-weight: 700;
+        color: var(--primary);
+        line-height: 1;
+        margin-bottom: 6px;
+      }
+      .stat-label {
+        font-size: 13px;
+        color: var(--muted);
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+        font-weight: 600;
+      }
+      .epic-card {
+        background: var(--panel);
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        margin-bottom: 16px;
+        overflow: hidden;
+      }
+      .epic-summary {
+        padding: 20px 24px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        cursor: pointer;
+        list-style: none;
+      }
+      .epic-summary::-webkit-details-marker { display: none; }
+      .epic-summary > div { flex: 1; }
+      .epic-name {
+        font-size: 18px;
+        font-weight: 600;
+        margin: 0;
+      }
+      .epic-tag {
+        font-size: 13px;
+        color: var(--muted);
+        margin-top: 2px;
+      }
+      .badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 4px 10px;
+        border-radius: 999px;
+        font-size: 12px;
+        font-weight: 600;
+        flex-shrink: 0;
+      }
+      .badge.done { background: #dcfce7; color: #166534; }
+      .badge.progress { background: #dbeafe; color: #1e40af; }
+      .badge.backlog { background: #f5f5f4; color: #57534e; }
+      details[open] .epic-summary { border-bottom: 1px solid var(--border); }
+      .chevron {
+        margin-left: 12px;
+        transition: transform 0.2s ease;
+        color: var(--muted);
+      }
+      details[open] .chevron { transform: rotate(180deg); }
+      .epic-body {
+        padding: 24px;
+      }
+      .epic-body h3 {
+        font-size: 15px;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+        color: var(--muted);
+        margin: 24px 0 12px;
+      }
+      .epic-body h3:first-child { margin-top: 0; }
+      .epic-body p { margin: 0 0 12px; }
+      .epic-body ol, .epic-body ul { margin: 0 0 12px; padding-left: 22px; }
+      .epic-body li { margin-bottom: 6px; }
+      .feature-block {
+        background: #fafaf9;
+        border-left: 3px solid var(--primary);
+        padding: 12px 16px;
+        margin: 12px 0;
+        border-radius: 0 6px 6px 0;
+      }
+      .feature-block .label {
+        font-weight: 600;
+        margin-bottom: 4px;
+      }
+      .feature-block .risk { color: var(--muted); font-style: italic; font-size: 14px; }
+      .feature-block .fix { color: var(--success); font-size: 14px; }
+      .feature-block.critical { border-left-color: var(--danger); }
+      .feature-block.warn { border-left-color: var(--warning); }
+      .numbers-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+        gap: 12px;
+        margin: 12px 0;
+      }
+      .number-pill {
+        background: var(--bg);
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        padding: 12px 14px;
+        text-align: center;
+      }
+      .number-pill .v {
+        font-size: 22px;
+        font-weight: 700;
+        color: var(--primary);
+        display: block;
+        line-height: 1.1;
+      }
+      .number-pill .l {
+        font-size: 11px;
+        color: var(--muted);
+        text-transform: uppercase;
+        letter-spacing: 0.03em;
+      }
+      .next-steps {
+        background: linear-gradient(135deg, #ecfeff 0%, #f0fdfa 100%);
+        border: 1px solid #99f6e4;
+        border-radius: 12px;
+        padding: 24px 28px;
+        margin-top: 32px;
+      }
+      .next-steps h2 { border: none; margin: 0 0 12px; }
+      .next-steps p { margin: 0 0 8px; }
+      footer {
+        margin-top: 64px;
+        text-align: center;
+        color: var(--muted);
+        font-size: 13px;
+      }
+      a { color: var(--primary); }
+      @media (max-width: 600px) {
+        h1 { font-size: 26px; }
+        .container { padding: 24px 16px 60px; }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <header class="report-header">
+        <span class="eyebrow">Relatório de Progresso</span>
+        <h1>Edital em Questões — App de Estudo para Concursos</h1>
+        <p class="subtitle">Plataforma para concurseiros estudarem com questões comentadas e cronograma adaptativo. Foco inicial: TJSC 2026 (banca FGV).</p>
+        <div class="meta">
+          <span><strong>Atualizado em:</strong> 30 de abril de 2026</span>
+          <span><strong>Fase:</strong> Desenvolvimento ativo</span>
+          <span><strong>Stack:</strong> React + Supabase + Vercel</span>
+        </div>
+      </header>
+
+      <h2>Visão geral</h2>
+      <div class="summary-grid">
+        <div class="stat">
+          <div class="stat-value">3 / 11</div>
+          <div class="stat-label">Epics concluídos</div>
+        </div>
+        <div class="stat">
+          <div class="stat-value">1.120</div>
+          <div class="stat-label">Questões reais no banco</div>
+        </div>
+        <div class="stat">
+          <div class="stat-value">90</div>
+          <div class="stat-label">Testes automatizados</div>
+        </div>
+        <div class="stat">
+          <div class="stat-value">100%</div>
+          <div class="stat-label">Aprovação na revisão de qualidade</div>
+        </div>
+      </div>
+
+      <h2>Epics entregues</h2>
+
+      <!-- EPIC 1 -->
+      <details class="epic-card">
+        <summary class="epic-summary">
+          <div>
+            <p class="epic-name">Epic 1 — Cadastro e Acesso (Fundação)</p>
+            <p class="epic-tag">8 funcionalidades · LGPD compliant · MVP completo</p>
+          </div>
+          <span class="badge done">✓ Concluído</span>
+          <span class="chevron">▾</span>
+        </summary>
+        <div class="epic-body">
+          <h3>O que foi construído</h3>
+          <p>Toda a <strong>base de cadastro e acesso</strong> do app. Antes não tinha login funcional; agora a pessoa consegue:</p>
+          <ol>
+            <li><strong>Criar uma conta</strong> com nome, e-mail e senha — aceitando os termos da LGPD</li>
+            <li><strong>Fazer login</strong> com e-mail e senha</li>
+            <li><strong>Recuperar a senha</strong> por e-mail se esquecer</li>
+            <li><strong>Editar o perfil</strong> (nome, qual concurso quer fazer, meta de estudo, data da prova)</li>
+            <li><strong>Baixar todos os seus dados</strong> em um arquivo (direito da LGPD)</li>
+            <li><strong>Excluir a própria conta</strong> definitivamente (também LGPD)</li>
+          </ol>
+          <p>Por trás dos panos: configuramos toda a infraestrutura — banco de dados, servidor, esteira de deploy automático. Qualquer mudança no código agora é testada e publicada sozinha.</p>
+
+          <h3>Problemas encontrados e corrigidos</h3>
+          <p>A revisão de qualidade encontrou <strong>3 problemas de risco médio</strong>, todos resolvidos:</p>
+          <div class="feature-block warn">
+            <div class="label">Brecha na exclusão de conta</div>
+            <div class="risk">Risco: alguém com acesso roubado podia tentar várias senhas para excluir conta.</div>
+            <div class="fix">Correção: bloqueio após 3 tentativas erradas em 1 hora.</div>
+          </div>
+          <div class="feature-block warn">
+            <div class="label">Brecha de "encheção" no login</div>
+            <div class="risk">Risco: ataques de inundação travariam login da vítima.</div>
+            <div class="fix">Correção: limite de 10 tentativas por minuto por origem.</div>
+          </div>
+          <div class="feature-block warn">
+            <div class="label">Mensagem de erro instável</div>
+            <div class="risk">Risco: atualização futura do banco podia quebrar mensagens.</div>
+            <div class="fix">Correção: detecção de erro robusta, à prova de mudanças.</div>
+          </div>
+
+          <h3>Coisas aceitas como "ok por enquanto"</h3>
+          <ul>
+            <li><strong>Aviso de e-mail já cadastrado:</strong> tecnicamente revela quem é cliente, mas o usuário precisa saber. Trade-off aceito.</li>
+            <li><strong>Configuração manual no painel da Supabase:</strong> 1 minuto de trabalho manual.</li>
+          </ul>
+
+          <h3>Números</h3>
+          <div class="numbers-grid">
+            <div class="number-pill"><span class="v">8</span><span class="l">Funcionalidades</span></div>
+            <div class="number-pill"><span class="v">54</span><span class="l">Testes pass</span></div>
+            <div class="number-pill"><span class="v">2</span><span class="l">Rodadas QA</span></div>
+            <div class="number-pill"><span class="v">0</span><span class="l">Erros código</span></div>
+          </div>
+        </div>
+      </details>
+
+      <!-- EPIC 2 -->
+      <details class="epic-card">
+        <summary class="epic-summary">
+          <div>
+            <p class="epic-name">Epic 2 — Catálogo e Seleção de Editais</p>
+            <p class="epic-tag">4 funcionalidades · Painel admin completo · 1 deferida</p>
+          </div>
+          <span class="badge done">✓ Concluído</span>
+          <span class="chevron">▾</span>
+        </summary>
+        <div class="epic-body">
+          <h3>O que foi construído</h3>
+          <p>O <strong>catálogo de editais</strong> e a forma de o usuário escolher um para estudar.</p>
+          <ol>
+            <li><strong>Catálogo público de editais</strong> com filtros (banca, órgão, ano) e busca por nome</li>
+            <li><strong>Botão "Estudar para este edital"</strong> em cada card, que pede as datas de inscrição e prova</li>
+            <li><strong>Aviso inteligente</strong>: se já estuda outro edital, sistema avisa antes de trocar</li>
+            <li><strong>Painel admin para o Founder</strong> em <code>/admin/editais</code>: criar, editar, publicar, arquivar — tudo via interface</li>
+            <li><strong>Controle fino de visibilidade</strong>: público, beta, ou allowlist específica — útil para liberar gradualmente</li>
+          </ol>
+
+          <h3>Problemas encontrados e corrigidos</h3>
+          <div class="feature-block warn">
+            <div class="label">Catálogo aberto demais</div>
+            <div class="risk">Risco: API direta vazava editais sem login.</div>
+            <div class="fix">Correção: catálogo agora exige login. Reversível se decidirmos abrir para SEO.</div>
+          </div>
+          <div class="feature-block warn">
+            <div class="label">Funções do banco com ponto cego</div>
+            <div class="risk">Risco: vetor avançado de injeção via "search path".</div>
+            <div class="fix">Correção: caminho fixado explicitamente (boa prática Supabase).</div>
+          </div>
+          <div class="feature-block warn">
+            <div class="label">Tipagem fraca no controle de admin</div>
+            <div class="risk">Risco: mudança futura na Supabase poderia quebrar bloqueio admin sem aviso.</div>
+            <div class="fix">Correção: tipo dedicado e helper. TypeScript pega qualquer mudança no boot.</div>
+          </div>
+
+          <h3>Coisas adiadas conscientemente</h3>
+          <p><strong>Story 2.5 — Múltiplos editais simultâneos:</strong> recurso premium dependente do sistema de pagamentos (Epic 7). Plano de execução documentado.</p>
+          <p><strong>Outros adiamentos pragmáticos:</strong> publicação automática agendada, preview de markdown, tabela com filtros avançados — todos "nice to have".</p>
+
+          <h3>Números</h3>
+          <div class="numbers-grid">
+            <div class="number-pill"><span class="v">4 + 1</span><span class="l">Funcionalidades (1 deferida)</span></div>
+            <div class="number-pill"><span class="v">80</span><span class="l">Testes pass</span></div>
+            <div class="number-pill"><span class="v">2</span><span class="l">Rodadas QA</span></div>
+            <div class="number-pill"><span class="v">4</span><span class="l">Migrações de banco</span></div>
+          </div>
+        </div>
+      </details>
+
+      <!-- EPIC 3 -->
+      <details class="epic-card">
+        <summary class="epic-summary">
+          <div>
+            <p class="epic-name">Epic 3 — Banco de Questões e Fluxo de Resposta</p>
+            <p class="epic-tag">6 funcionalidades · 1.120 questões reais · O coração do app</p>
+          </div>
+          <span class="badge done">✓ Concluído</span>
+          <span class="chevron">▾</span>
+        </summary>
+        <div class="epic-body">
+          <h3>O que foi construído</h3>
+          <p>O <strong>coração do app</strong>: o usuário agora consegue de fato estudar respondendo questões com feedback inteligente.</p>
+          <ol>
+            <li><strong>Banco de questões com 1.120 questões reais do TJSC 2026</strong> (Técnico + Analista, banca FGV) — extraídas dos PDFs originais via parser automatizado</li>
+            <li><strong>Painel admin do curador/founder</strong> para criar, editar, publicar, arquivar questões — com histórico de revisões automático</li>
+            <li><strong>Tela "Praticar"</strong>: usuário escolhe edital → recebe questão aleatória → marca alternativa → vê acerto/erro → recebe explicação</li>
+            <li><strong>Reportar problemas</strong> em questões diretamente da tela de feedback (motivo + comentário) — limite de 5 reports/dia por usuário</li>
+            <li><strong>Vínculo questão↔edital</strong>: cada questão é mostrada apenas para quem está estudando aquele edital</li>
+          </ol>
+
+          <h3>Problemas encontrados e corrigidos</h3>
+          <p>A revisão detectou <strong>1 problema GRAVE + 2 médios</strong>, todos resolvidos:</p>
+          <div class="feature-block critical">
+            <div class="label">🚨 Brecha de trapaça no resultado das questões (GRAVE)</div>
+            <div class="risk">Risco: usuário com noção técnica podia abrir DevTools e marcar resposta errada como certa.</div>
+            <div class="fix">Correção: verificação no servidor. O banco recalcula a correção comparando com o gabarito real. Trapaça impossível.</div>
+          </div>
+          <div class="feature-block warn">
+            <div class="label">Gabarito vazando antes da resposta</div>
+            <div class="risk">Risco: usuário podia ver alternativa correta no DevTools antes de marcar.</div>
+            <div class="fix">Correção: tela recebe questão sem gabarito. Gabarito + comentário só são baixados depois da resposta.</div>
+          </div>
+          <div class="feature-block warn">
+            <div class="label">Bug ao trocar de edital</div>
+            <div class="risk">Risco: ao trocar de concurso, sistema continuava puxando questões do antigo.</div>
+            <div class="fix">Correção: ajuste de 1 linha na regra de acesso do banco.</div>
+          </div>
+
+          <h3>Coisas aceitas como "ok por enquanto"</h3>
+          <ul>
+            <li><strong>Tags livres em questões:</strong> matéria/banca/dificuldade já dão flexibilidade suficiente.</li>
+            <li><strong>Curador com acesso a rascunhos:</strong> liberado só para founder. Curador entra junto com pipeline de IA (Epic 8).</li>
+            <li><strong>Multi-edital simultâneo:</strong> deferido junto com o sistema de pagamentos premium.</li>
+          </ul>
+
+          <h3>Números</h3>
+          <div class="numbers-grid">
+            <div class="number-pill"><span class="v">1.120</span><span class="l">Questões reais</span></div>
+            <div class="number-pill"><span class="v">90</span><span class="l">Testes pass</span></div>
+            <div class="number-pill"><span class="v">2</span><span class="l">Rodadas QA</span></div>
+            <div class="number-pill"><span class="v">5</span><span class="l">Migrações banco</span></div>
+          </div>
+        </div>
+      </details>
+
+      <h2>Como foi a abordagem</h2>
+      <p>Cada Epic passou pelo mesmo ciclo:</p>
+      <ol>
+        <li><strong>Stories detalhadas</strong> com critérios de aceite claros antes de qualquer linha de código</li>
+        <li><strong>Implementação iterativa</strong> com commits granulares e testes automatizados a cada passo</li>
+        <li><strong>Revisão de qualidade independente</strong> que audita código, segurança e regras de negócio</li>
+        <li><strong>Correção dos achados</strong> antes de fechar o Epic — nada vai pra produção com pendências de risco médio ou alto</li>
+        <li><strong>Atualização do board</strong> (Monday) com status, sprint e resumo executivo em linguagem simples</li>
+      </ol>
+      <p>Tudo está versionado em Git, com deploy automático a cada merge na branch principal.</p>
+
+      <div class="next-steps">
+        <h2>Próximos passos</h2>
+        <p><strong>Epic 4 — Cronograma adaptativo de estudos</strong> está em andamento. Vai usar os dados de respostas (acertos/erros) para sugerir automaticamente quais matérias o usuário deve priorizar a cada dia.</p>
+        <p><strong>Roadmap MVP:</strong> Epics 1–6 (essenciais). Depois entra a fase Growth (assinatura paga, pipeline de IA, WhatsApp).</p>
+      </div>
+
+      <footer>
+        Edital em Questões · Relatório gerado automaticamente em 2026-04-30
+      </footer>
+    </div>
+  </body>
+</html>

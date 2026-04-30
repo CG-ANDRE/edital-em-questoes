@@ -1,18 +1,21 @@
 ---
 storyId: epic-3
 title: Epic 3 — Question Bank & Answer Flow
-verdict: CONCERNS
-severity: HIGH
+verdict: PASS
 reviewer: Quinn (QA / Test Architect)
 reviewDate: 2026-04-30
+reviewIterations: 2
 storiesReviewed: [3.1, 3.2, 3.3, 3.4, 3.5, 3.6]
 ---
 
 # QA Gate — Epic 3
 
-## Verdict: **PASS WITH CONCERNS** ⚠️ (1 HIGH + 2 MEDIUM + 1 LOW)
+## Verdict: **PASS** ✅ (após re-review)
 
-Epic funcional e cobre todas as 6 stories, mas **identificada vulnerabilidade HIGH de integridade** que recomendo fortemente corrigir antes do push.
+**1ª iteração:** PASS WITH CONCERNS (1 HIGH + 2 MEDIUM + 1 LOW).
+**2ª iteração:** PASS limpo após @dev aplicar fixes H1/M1/M2 no commit `241e43e`.
+
+Epic 3 está **APROVADO para push e deploy**. L1 (visibility.userIds) mantida como decisão MVP.
 
 A funcionalidade roda perfeitamente — o problema é que um usuário malicioso pode trapacear no score de respostas, comprometendo Epic 5 (score de confiança) e qualquer feature de ranking/cronograma adaptativo (Epic 4) que dependa de dados confiáveis.
 
