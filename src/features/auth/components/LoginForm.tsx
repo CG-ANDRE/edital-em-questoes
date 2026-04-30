@@ -1,7 +1,7 @@
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { useNavigate, useSearchParams } from "react-router-dom";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { toast } from "sonner";
 import * as Sentry from "@sentry/react";
 
@@ -86,6 +86,14 @@ export function LoginForm() {
             {form.formState.errors.password.message}
           </p>
         )}
+        <div className="text-right">
+          <Link
+            to="/forgot-password"
+            className="text-sm text-muted-foreground hover:underline"
+          >
+            Esqueci minha senha
+          </Link>
+        </div>
       </div>
 
       <Button type="submit" disabled={mutation.isPending} className="w-full">

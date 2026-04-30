@@ -4,6 +4,8 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import LoginPage from "./pages/public/LoginPage";
+import ForgotPasswordPage from "./pages/public/ForgotPasswordPage";
+import ResetPasswordPage from "./pages/public/ResetPasswordPage";
 import { RequireAuth } from "./components/RequireAuth";
 import Dashboard from "./pages/Dashboard";
 import Practice from "./pages/Practice";
@@ -40,6 +42,8 @@ const App = () => (
           <Route path="/" element={<Navigate to="/login" replace />} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/cadastro" element={<SignupPage />} />
+          <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+          <Route path="/reset-password" element={<ResetPasswordPage />} />
           <Route
             path="/dashboard"
             element={

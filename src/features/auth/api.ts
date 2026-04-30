@@ -68,3 +68,21 @@ export async function signOut(): Promise<void> {
   const { error } = await supabase.auth.signOut();
   if (error) throw error;
 }
+
+export async function requestPasswordReset(email: string): Promise<void> {
+  const redirectTo = `${window.location.origin}/reset-password`;
+  const { error } = await supabase.auth.resetPasswordForEmail(email, { redirectTo });
+  if (error && error.status && error.status >= 500) {
+    Sentry.captureException(error, { tags: { feature: "auth-password-reset" } });
+    throw error;
+  }
+}
+
+export async function updatePassword(newPassword: string): Promise<void> {
+  const { error } = await supabase.auth.updateUser({ password: newPassword });
+  if (error) {
+    Sentry.captureException(error, { tags: { feature: "auth-password-reset" } });
+    throw error;
+  }
+  await supabase.auth.signOut({ scope: "others" });
+}
