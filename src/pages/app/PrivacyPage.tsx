@@ -1,4 +1,5 @@
 import { DSRPanel } from "@/features/settings/components/DSRPanel";
+import { DeleteAccountDialog } from "@/features/settings/components/DeleteAccountDialog";
 
 export default function PrivacyPage() {
   return (
@@ -10,10 +11,21 @@ export default function PrivacyPage() {
         </p>
       </header>
 
-      <section className="space-y-6">
+      <section className="space-y-8">
         <div>
           <h2 className="text-lg font-semibold mb-2">Exportação de dados</h2>
           <DSRPanel />
+        </div>
+
+        <div className="border-t pt-8">
+          <h2 className="text-lg font-semibold mb-2 text-destructive">
+            Excluir conta
+          </h2>
+          <p className="text-sm text-muted-foreground mb-4">
+            Apaga permanentemente seus dados pessoais. Esta ação é
+            irreversível.
+          </p>
+          <DeleteAccountDialog />
         </div>
       </section>
     </main>

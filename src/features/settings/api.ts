@@ -61,3 +61,23 @@ export async function exportData(): Promise<void> {
   document.body.removeChild(a);
   URL.revokeObjectURL(url);
 }
+
+export async function deleteAccount(password: string): Promise<void> {
+  const { data, error } = await supabase.functions.invoke<{ ok?: boolean; error?: { code?: string } }>(
+    "dsr-delete",
+    { body: { password } }
+  );
+
+  if (error) {
+    const status = (error as { context?: { status?: number } }).context?.status;
+    if (status === 401) {
+      throw new Error("REAUTH_FAILED");
+    }
+    throw error;
+  }
+
+  if (data?.error) {
+    if (data.error.code === "REAUTH_FAILED") throw new Error("REAUTH_FAILED");
+    throw new Error(data.error.code ?? "DELETE_FAILED");
+  }
+}
